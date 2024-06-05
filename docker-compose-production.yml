@@ -5,15 +5,15 @@ networks:
     name: typingrealm
 
 services:
-  #ng-kartman-ui:
-  #  image: ${DOCKER_REGISTRY-}ng-kartman-ui
-  #  container_name: ng-kartman-ui
-  #  build:
-  #    context: frontend/.
-  #    dockerfile: Dockerfile-production
-  #  restart: unless-stopped
-  #  mem_limit: 1g
-  #  mem_reservation: 750m
+  ng-kartman-ui:
+    image: ${DOCKER_REGISTRY-}ng-kartman-ui
+    container_name: ng-kartman-ui
+    build:
+      context: frontend/.
+      dockerfile: Dockerfile-production
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 750m
 
   ng-kartman-api:
     image: ${DOCKER_REGISTRY-}ng-kartman-api
