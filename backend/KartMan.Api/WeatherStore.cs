@@ -52,13 +52,13 @@ LIMIT 1", connection);
         {
             using var connection = await _db.OpenConnectionAsync();
             await using var cmd = new NpgsqlCommand(@"
-INSERT INTO weather_history (recorded_at, air_temp, humidity, precipitation, clouds, json_data)
-VALUES (@recorded_at, @air_temp, @humidity, @precipitation, @clouds, @json_data);", connection);
+INSERT INTO weather_history (recorded_at, air_temp, humidity, precipitation, cloud, json_data)
+VALUES (@recorded_at, @air_temp, @humidity, @precipitation, @cloud, @json_data);", connection);
             cmd.Parameters.AddWithValue("recorded_at", data.TimestampUtc);
             cmd.Parameters.AddWithValue("air_temp", data.TempC);
             cmd.Parameters.AddWithValue("humidity", data.Humidity);
             cmd.Parameters.AddWithValue("precipitation", data.PrecipitationMm);
-            cmd.Parameters.AddWithValue("clouds", data.Cloud);
+            cmd.Parameters.AddWithValue("cloud", data.Cloud);
             var jsonData = cmd.Parameters.Add("json_data", NpgsqlTypes.NpgsqlDbType.Json);
             jsonData.Value = JsonSerializer.Serialize(data);
 
