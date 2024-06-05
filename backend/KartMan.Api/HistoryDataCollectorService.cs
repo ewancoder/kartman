@@ -289,8 +289,8 @@ public sealed class HistoryDataCollectorService : IHostedService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly HistoryDataRepository _repository;
     private string? _previousHash;
-    private const int StartTimeHourUtc = 0; // 5 GMT, 9 AM.
-    private const int EndTimeHourUtc = 24; // 19 PMT, 11 PM.
+    private const int StartTimeHourUtc = 5; // 5 GMT, 9 AM.
+    private const int EndTimeHourUtc = 19; // 19 PMT, 11 PM.
     private DateTime _lastTelemetryRecordedAtUtc;
     private string? _lastSession;
     private bool _dayEnded = false;
