@@ -258,7 +258,7 @@ WITH new_or_existing AS (
             SELECT s.id, w.weather, w.sky, w.wind, w.air_temp, w.track_temp, w.track_temp_approximation, s.track_config
             FROM session s
             JOIN weather w ON w.id = s.weather_id
-            WHERE id = @id
+            WHERE s.id = @id
         ";
         command.Parameters.AddWithValue("id", sessionId);
 
@@ -342,8 +342,7 @@ public sealed class HistoryDataCollectorService : IHostedService
         try
         {
             using var client = _httpClientFactory.CreateClient();
-            //var response = await client.GetAsync("https://kart-timer.com/drivers/ajax.php?p=livescreen&track=110&target=updaterace");
-            var response = await client.GetAsync("https://kart-timer.com/drivers/ajax.php?p=livescreen&track=90&target=updaterace");
+            var response = await client.GetAsync("https://kart-timer.com/drivers/ajax.php?p=livescreen&track=110&target=updaterace");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
