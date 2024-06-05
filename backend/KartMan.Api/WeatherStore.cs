@@ -12,7 +12,7 @@ public sealed class WeatherStore : IWeatherStore
 
     public WeatherStore(IConfiguration configuration)
     {
-        var connectionString = configuration["ConnectionStrings__DataConnectionString"];
+        var connectionString = configuration["DbConnectionString"];
         var builder = new NpgsqlDataSourceBuilder(connectionString);
         _db = builder.Build();
     }
