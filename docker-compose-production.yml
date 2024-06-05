@@ -1,0 +1,41 @@
+version: "3.8"
+
+networks:
+  default:
+    name: typingrealm
+
+services:
+  #ng-kartman-ui:
+  #  image: ${DOCKER_REGISTRY-}ng-kartman-ui
+  #  container_name: ng-kartman-ui
+  #  build:
+  #    context: frontend/.
+  #    dockerfile: Dockerfile-production
+  #  restart: unless-stopped
+  #  mem_limit: 1g
+  #  mem_reservation: 750m
+
+  ng-kartman-api:
+    image: ${DOCKER_REGISTRY-}ng-kartman-api
+    container_name: ng-kartman-api
+    build:
+      context: backend/.
+      dockerfile: KartMan.Api/Dockerfile-production
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 750m
+    env_file:
+      - secrets.env
+
+  ng-kartman-postgres:
+    image: postgres
+    container_name: kartman-postgres
+    ports:
+      - 10232:5432 # Port shouldn't be exposed in production.
+    volumes:
+      - ./infrastructure-data/prod/kartman/postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 750m
+    env_file:
+      - secrets.env
