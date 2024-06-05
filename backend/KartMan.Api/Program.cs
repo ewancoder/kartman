@@ -10,10 +10,16 @@ builder.Services.AddSingleton<WeatherGatherer>();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
+var weatherStore = app.Services.GetRequiredService<IWeatherStore>();
 
 app.MapGet("/diag", () =>
 {
     return DateTime.UtcNow;
+});
+
+app.MapGet("/api/weather/{date}", async (DateTime date) =>
+{
+    return await weatherStore.GetWeatherDataForAsync(date.Date);
 });
 
 app.Services.GetRequiredService<WeatherGatherer>();

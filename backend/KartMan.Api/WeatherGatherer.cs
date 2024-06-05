@@ -39,6 +39,7 @@ public sealed record WeatherData(
     decimal FeelsLikeC,
     decimal DewPointC)
 {
+    public long Id { get; set; } // Database identifier.
     public WeatherComparison ToComparison()
     {
         return new(
@@ -118,6 +119,7 @@ public sealed class WeatherRetriever : IWeatherRetriever
 
 public interface IWeatherStore
 {
+    ValueTask<WeatherData?> GetWeatherDataForAsync(DateTime time);
     ValueTask StoreAsync(WeatherData data);
 }
 
