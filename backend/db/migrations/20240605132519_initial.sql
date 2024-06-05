@@ -2,10 +2,10 @@
 create table "weather_history" (
     "id" bigserial primary key not null,
     "recorded_at" timestamp not null,
-    "air_temp" decimal(4, 4) not null,
-    "humidity" decimal (4, 4) not null,
-    "precipitation" decimal(4, 4) not null,
-    "clouds" decimal(4, 4) not null,
+    "air_temp" decimal(8, 4) not null,
+    "humidity" decimal (8, 4) not null,
+    "precipitation" decimal(8, 4) not null,
+    "clouds" decimal(8, 4) not null,
     "json_data" json not null /* TODO: Store more weather fields indexed in future. For now just gathering them all as json. */
 );
 
@@ -16,12 +16,12 @@ create table "weather" (
     "recorded_at" timestamp not null,
     "weather_history_id" bigint null, /* If this is set - takes all values from there unless overridden. */
     /* The rest of the fields override weather_history when set */
-    "air_temp" decimal(4, 4) null,
-    "track_temp" decimal (4, 4) null,
+    "air_temp" decimal(8, 4) null,
+    "track_temp" decimal (8, 4) null,
     "track_temp_info" varchar(100) null,
-    "humidity" decimal (4, 4) null,
+    "humidity" decimal (8, 4) null,
     "humidity_info" varchar(100) null,
-    "precipitation" decimal(4, 4) null,
+    "precipitation" decimal(8, 4) null,
     "precipitation_info" varchar(100) null,
     "sky" varchar(100) null
 );
