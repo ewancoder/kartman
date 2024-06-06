@@ -83,7 +83,7 @@ create table "lap_data" (
     "lap" smallint not null,
     "laptime" decimal(8, 4) not null,
     "position" smallint not null,
-    "gap" decimal(8,4) null,
+    "gap" varchar(30) null,
     "weather_id" bigint null /* If it's not null - it sets the weather for the rest of laps of that session that have it null */
 );
 

@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace KartMan.Api;
 
@@ -69,13 +70,16 @@ public interface IWeatherRetriever
 }
 public sealed class WeatherRetriever : IWeatherRetriever
 {
+    private readonly ILogger<WeatherRetriever> _logger;
     private readonly string _apiKey;
     private readonly IHttpClientFactory _httpClientFactory;
 
     public WeatherRetriever(
+        ILogger<WeatherRetriever> logger,
         IHttpClientFactory httpClientFactory,
         IConfiguration configuration)
     {
+        _logger = logger;
         _httpClientFactory = httpClientFactory;
         _apiKey = configuration["WeatherApiKey"]
             ?? throw new InvalidOperationException("Could not get WeatherApiKey.");
@@ -87,14 +91,17 @@ public sealed class WeatherRetriever : IWeatherRetriever
 
         try
         {
+            _logger.LogDebug("Getting weather from weatherapi.");
             var response = await client.GetAsync($"https://api.weatherapi.com/v1/current.json?key={_apiKey}&q=Batumi&aqi=no");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
+            _logger.LogTrace("Got weather from weatherapi: {WeatherContent}", content);
+
             var raw = JsonSerializer.Deserialize<RawWeatherData>(content)
                 ?? throw new InvalidOperationException("Could not get the weather.");
 
-            return new WeatherData(
+            var data = new WeatherData(
                 DateTime.UtcNow,
                 raw.current.temp_c,
                 raw.current.is_day == 1,
@@ -108,10 +115,14 @@ public sealed class WeatherRetriever : IWeatherRetriever
                 raw.current.cloud,
                 raw.current.feelslike_c,
                 raw.current.dewpoint_c);
+
+            _logger.LogDebug("Got weather: {@Weather}", data);
+
+            return data;
         }
         catch (Exception exception)
         {
-            // TODO: Log this.
+            _logger.LogError(exception, "Failed to get the weather.");
             return null;
         }
     }
@@ -125,15 +136,18 @@ public interface IWeatherStore
 
 public sealed class WeatherGatherer
 {
+    private readonly ILogger<WeatherGatherer> _logger;
     private readonly IWeatherRetriever _weatherRetriever;
     private readonly IWeatherStore _weatherStore;
     private readonly Task _gathering;
     private WeatherData? _lastData;
 
     public WeatherGatherer(
+        ILogger<WeatherGatherer> logger,
         IWeatherRetriever weatherRetriever,
         IWeatherStore weatherStore)
     {
+        _logger = logger;
         _weatherRetriever = weatherRetriever;
         _weatherStore = weatherStore;
         _gathering = GatherAsync();
@@ -141,15 +155,21 @@ public sealed class WeatherGatherer
 
     private async Task GatherAsync()
     {
+        _logger.LogInformation("Started gathering weather.");
+
         while (true)
         {
+            using var _ = _logger.AddScoped("WeatherTrace", Guid.NewGuid().ToString())
+                .BeginScope();
+
             try
             {
                 await GatherWeatherAsync();
+                _logger.LogDebug("Successfully gathered weather.");
             }
-            catch
+            catch (Exception exception)
             {
-                // TODO: Log this.
+                _logger.LogError(exception, "Failed to gather and/or store the weather.");
             }
             finally
             {
@@ -166,8 +186,14 @@ public sealed class WeatherGatherer
 
         if (_lastData == null || _lastData.ToComparison() != data.ToComparison())
         {
+            _logger.LogInformation("Gathered weather that is different from last recorded value. Saving it.");
             await _weatherStore.StoreAsync(data);
             _lastData = data;
+            _logger.LogInformation("Successfully saved the weather.");
+        }
+        else
+        {
+            _logger.LogDebug("Weather doesn't differ from the last recorded value, skipping gathering.");
         }
     }
 }
