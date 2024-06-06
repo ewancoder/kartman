@@ -433,10 +433,20 @@ public sealed class HistoryDataCollectorService : IHostedService
 
             _lastSession = rawJson.headinfo.number;
 
+            static decimal ParseTime(string time)
+            {
+                if (!time.Contains(":"))
+                    return Convert.ToDecimal(time);
+
+                var minutes = Convert.ToInt32(time.Split(":")[0]);
+                return Convert.ToDecimal(time.Split(":")[1]) + (minutes * 60m);
+            }
+
             var entries = rawJson.results.Select(x =>
             {
                 var time = x[6]?.ToString();
-                if (string.IsNullOrEmpty(time) || !decimal.TryParse(time, out var _)) return null;
+                if (string.IsNullOrEmpty(time)) return null;
+                var decimalTime = ParseTime(time);
 
                 try
                 {
@@ -447,7 +457,7 @@ public sealed class HistoryDataCollectorService : IHostedService
                         rawJson.headinfo.len,
                         x[2].ToString()!,
                         Convert.ToInt32(x[3].ToString()),
-                        Convert.ToDecimal(time),
+                        decimalTime,
                         Convert.ToInt32(x[0]?.ToString()), x[7]?.ToString()); // TODO: Figure out last 2 values. Debug.
                 }
                 catch (Exception exception)
