@@ -86,7 +86,7 @@ public sealed class HistoryDataRepository
             ";
             command.Parameters.AddWithValue("day", day.DayNumber);
 
-            _logger.LogDebug("Executing SQL command {Command} with parameters {@Parameters}.", command.CommandText, command.Parameters);
+            _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
             var list = new List<LapEntry>();
             using (var reader = await command.ExecuteReaderAsync())
             {
@@ -179,7 +179,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             command.Parameters.AddWithValue("gap", entry.gap != null ? entry.gap : DBNull.Value);
             command.Parameters.AddWithValue("weather_id", DBNull.Value);
 
-            _logger.LogDebug("Executing SQL command {Command} with parameters {@Parameters}.", command.CommandText, command.Parameters);
+            _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
             await command.ExecuteNonQueryAsync();
             _cache.Add(entry.ToComparisonEntry()); // May be a slight racing condition. Consider locking around these.
         }
@@ -252,7 +252,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
                 command.Parameters.AddWithValue("sky", weather == null ? DBNull.Value : (int)GetSky(weather));
                 command.Parameters.AddWithValue("wind", weather == null ? DBNull.Value : (int)GetWind(weather));
 
-                _logger.LogDebug("Executing SQL command {Command} with parameters {@Parameters}.", command.CommandText, command.Parameters);
+                _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
                 var idObj = await command.ExecuteScalarAsync()
                     ?? throw new InvalidOperationException("Database insert returned null result.");
                 weatherId = Convert.ToInt64(idObj.ToString() ?? throw new InvalidOperationException("Database insert returned null result"));
@@ -278,7 +278,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
                 command.Parameters.AddWithValue("weather_id", weatherId);
                 command.Parameters.AddWithValue("track_config", DBNull.Value);
 
-                _logger.LogDebug("Executing SQL command {Command} with parameters {@Parameters}.", command.CommandText, command.Parameters);
+                _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
                 await command.ExecuteNonQueryAsync();
             }
 
@@ -309,7 +309,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             ";
             command.Parameters.AddWithValue("id", sessionId);
 
-            _logger.LogDebug("Executing SQL command {Command} with parameters {@Parameters}.", command.CommandText, command.Parameters);
+            _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
             using var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {

@@ -42,7 +42,7 @@ ORDER BY recorded_at DESC
 LIMIT 1", connection);
             command.Parameters.AddWithValue("time", time);
 
-            _logger.LogDebug("Executing SQL command: {Command} with parameters {@Parameters}.", command.CommandText, command.Parameters);
+            _logger.LogDebug("Executing SQL command: {Command}.", command.CommandText);
             using var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
@@ -84,7 +84,7 @@ VALUES (@recorded_at, @air_temp, @humidity, @precipitation, @cloud, @json_data);
             var jsonData = cmd.Parameters.Add("json_data", NpgsqlTypes.NpgsqlDbType.Json);
             jsonData.Value = JsonSerializer.Serialize(data);
 
-            _logger.LogDebug("Executing sql command {Command} with parameters {@Parameters}.", cmd.CommandText, cmd.Parameters);
+            _logger.LogDebug("Executing sql command {Command}.", cmd.CommandText);
             await cmd.ExecuteNonQueryAsync();
         }
         catch (Exception exception)
