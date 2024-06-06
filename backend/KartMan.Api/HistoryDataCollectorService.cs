@@ -318,8 +318,8 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
                 Wind? wind = reader.IsDBNull(3) ? null : (Wind)reader.GetInt32(3);
                 decimal? airTemp = reader.IsDBNull(4) ? null : reader.GetDecimal(4);
                 decimal? trackTemp = reader.IsDBNull(5) ? null : reader.GetDecimal(5);
-                TrackTemp? trackTempApproximation = reader.IsDBNull(6) ? null : (TrackTemp)reader.GetInt32(6);
-                TrackConfig? trackConfig = reader.IsDBNull(7) ? null : (TrackConfig)reader.GetInt32(7);
+                TrackTemp? trackTempApproximation = reader.IsDBNull(6) ? null : (TrackTemp)Convert.ToInt32(reader.GetString(6));
+                TrackConfig? trackConfig = reader.IsDBNull(7) ? null : (TrackConfig)Convert.ToInt32(reader.GetString(7)); // TODO: If ever storing strings there - handle it here properly.
 
                 return new SessionInfo(weather, sky, wind, airTemp, trackTemp,
                     trackTempApproximation, trackConfig);
