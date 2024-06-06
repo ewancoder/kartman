@@ -76,7 +76,7 @@ public sealed class HistoryDataRepository
 
             using var connection = await _db.OpenConnectionAsync();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
             @"
                 SELECT d.recorded_at, s.session, s.total_length, d.kart, d.lap, d.laptime, d.position, d.gap
@@ -164,7 +164,7 @@ public sealed class HistoryDataRepository
 
             using var connection = await _db.OpenConnectionAsync();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
             @"
 INSERT INTO lap_data (session_id, recorded_at, kart, lap, laptime, position, gap, weather_id)
@@ -235,7 +235,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             // TODO: Do not create duplicate weather entries, get existing for this session (after app restart).
             long weatherId;
             {
-                var command = connection.CreateCommand();
+                using var command = connection.CreateCommand();
                 command.Transaction = transaction;
 
                 command.CommandText = @"
@@ -259,7 +259,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             }
 
             {
-                var command = connection.CreateCommand();
+                using var command = connection.CreateCommand();
                 command.Transaction = transaction;
 
                 command.CommandText = @"
@@ -299,10 +299,10 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
         {
             using var connection = await _db.OpenConnectionAsync();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
             @"
-                SELECT s.id, w.weather, w.sky, w.wind, w.air_temp, w.track_temp, w.track_temp_approximation, s.track_config
+                SELECT s.id, w.weather, w.sky, w.wind, w.air_temp, w.track_temp, w.track_temp_info, s.track_config
                 FROM session s
                 JOIN weather w ON w.id = s.weather_id
                 WHERE s.id = @id
@@ -332,6 +332,115 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
         {
             _logger.LogError(exception, "Failed to get session info.");
             throw;
+        }
+    }
+
+    public async Task UpdateSessionInfoAsync(string sessionId, SessionInfo info)
+    {
+        _logger.AddScoped("SessionId", sessionId).BeginScope();
+
+        if (!info.IsValid)
+        {
+            _logger.LogError("Nothing to update, supplied request is empty. Skipping. {Session} {@Data}.", sessionId, info);
+            return;
+        }
+
+        try
+        {
+            if (info.TrackConfig != null)
+            {
+                _logger.LogDebug("Updating track configuration.");
+                using var connection = await _db.OpenConnectionAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = @"UPDATE session SET track_config = @track_config WHERE id = @id;";
+                command.Parameters.AddWithValue("id", sessionId);
+                command.Parameters.AddWithValue("track_config", ((int)info.TrackConfig).ToString());
+
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            if (info.Sky != null)
+            {
+                _logger.LogDebug("Updating sky.");
+                using var connection = await _db.OpenConnectionAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = @"UPDATE session SET sky = @sky WHERE id = @id;";
+                command.Parameters.AddWithValue("id", sessionId);
+                command.Parameters.AddWithValue("sky", (int)info.Sky);
+
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            if (info.Weather != null)
+            {
+                _logger.LogDebug("Updating weather.");
+                using var connection = await _db.OpenConnectionAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = @"UPDATE session SET weather = @weather WHERE id = @id;";
+                command.Parameters.AddWithValue("id", sessionId);
+                command.Parameters.AddWithValue("weather", (int)info.Weather);
+
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            if (info.AirTempC != null)
+            {
+                _logger.LogDebug("Updating air temp.");
+                using var connection = await _db.OpenConnectionAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = @"UPDATE session SET air_temp = @air_temp WHERE id = @id;";
+                command.Parameters.AddWithValue("id", sessionId);
+                command.Parameters.AddWithValue("air_temp", info.AirTempC);
+
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            if (info.TrackTempC != null)
+            {
+                _logger.LogDebug("Updating track temp.");
+                using var connection = await _db.OpenConnectionAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = @"UPDATE session SET track_temp = @track_temp WHERE id = @id;";
+                command.Parameters.AddWithValue("id", sessionId);
+                command.Parameters.AddWithValue("track_temp", info.TrackTempC);
+
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            if (info.Wind != null)
+            {
+                _logger.LogDebug("Updating wind.");
+                using var connection = await _db.OpenConnectionAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = @"UPDATE session SET wind = @wind WHERE id = @id;";
+                command.Parameters.AddWithValue("id", sessionId);
+                command.Parameters.AddWithValue("wind", (int)info.Wind);
+
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            if (info.TrackTempApproximation != null)
+            {
+                _logger.LogDebug("Updating track temp info.");
+                using var connection = await _db.OpenConnectionAsync();
+                using var command = connection.CreateCommand();
+                command.CommandText = @"UPDATE session SET track_temp_info = @track_temp_info WHERE id = @id;";
+                command.Parameters.AddWithValue("id", sessionId);
+                command.Parameters.AddWithValue("track_temp_info", (int)info.TrackTempApproximation);
+
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Failed to update session data.");
         }
     }
 }

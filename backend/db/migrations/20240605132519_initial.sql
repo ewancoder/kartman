@@ -28,8 +28,7 @@ create table "weather" (
     /* Additional fields for user input on the weather */
     "weather" smallint null,
     "sky" smallint null,
-    "wind" smallint null,
-    "track_temp_approximation" smallint null
+    "wind" smallint null
 );
 
 create index "weather_recorded_at_idx" on "weather" ("recorded_at");

@@ -58,6 +58,11 @@ app.MapGet("/api/weather/{date}", async (DateTime date) =>
 
 var repository = app.Services.GetRequiredService<HistoryDataRepository>();
 
+app.MapPut("/api/sessions/{session}", async (string session, SessionInfo info) =>
+{
+    await repository.UpdateSessionInfoAsync(session, info);
+});
+
 app.MapGet("/api/sessions/{session}", async (string session) =>
 {
     return await repository.GetSessionInfoAsync(session);
