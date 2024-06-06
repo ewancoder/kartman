@@ -441,6 +441,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
         catch (Exception exception)
         {
             _logger.LogError(exception, "Failed to update session data.");
+            throw;
         }
     }
 }
