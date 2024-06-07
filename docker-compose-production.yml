@@ -5,9 +5,9 @@ networks:
     name: typingrealm
 
 services:
-  ng-kartman-ui:
-    image: ${DOCKER_REGISTRY-}ng-kartman-ui
-    container_name: ng-kartman-ui
+  kartman-ui:
+    image: ${DOCKER_REGISTRY-}kartman-ui
+    container_name: kartman-ui
     build:
       context: frontend/.
       dockerfile: Dockerfile-production
@@ -15,9 +15,9 @@ services:
     mem_limit: 1g
     mem_reservation: 750m
 
-  ng-kartman-api:
-    image: ${DOCKER_REGISTRY-}ng-kartman-api
-    container_name: ng-kartman-api
+  kartman-api:
+    image: ${DOCKER_REGISTRY-}kartman-api
+    container_name: kartman-api
     build:
       context: backend/.
       dockerfile: KartMan.Api/Dockerfile-production
@@ -27,7 +27,7 @@ services:
     env_file:
       - secrets.env
 
-  ng-kartman-postgres:
+  kartman-postgres:
     image: postgres
     container_name: kartman-postgres
     ports:
