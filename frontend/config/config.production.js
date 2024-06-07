@@ -1,4 +1,4 @@
 export const config = {
-    historyApiUrl: 'https://api.dev.kartman.typingrealm.com/api/history',
-    sessionsApiUrl: 'https://api.dev.kartman.typingrealm.com/api/sessions'
+    historyApiUrl: 'https://api.kartman.typingrealm.com/api/history',
+    sessionsApiUrl: 'https://api.kartman.typingrealm.com/api/sessions'
 }
