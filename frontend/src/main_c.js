@@ -2,15 +2,30 @@ import { config } from './config.js';
 
 const element = document.getElementById('main');
 
-const params = new URLSearchParams(window.location.search);
-
 let isTop10 = false;
 let response = undefined;
 let json = undefined;
 
 //document.getElementById('top10-btn').addEventListener('click', openTop10);
 //document.getElementById('today-btn').addEventListener('click', openToday);
-await openToday();
+let day = window.location.hash.replace('#', '');
+await openDay(day);
+
+const datePickerElement = document.getElementById('date');
+const fp = window.flatpickr(datePickerElement, {
+    dateFormat: 'd-m-Y',
+    onChange: async function(date, dateStr) {
+        window.location.hash = dateStr;
+        await openDay(dateStr);
+    }
+});
+
+document.getElementById('load-today').addEventListener('click', loadToday);
+async function loadToday() {
+    window.location.hash = 'today';
+    datePickerElement.value = '';
+    await openDay('today');
+}
 
 async function openTop10() {
     isTop10 = true;
@@ -19,12 +34,10 @@ async function openTop10() {
     await reload();
 }
 
-async function openToday() {
-    isTop10 = false;
-    let date = params.get('date');
-    if (!date) date = 'today';
+async function openDay(day) {
+    if (!day) day = 'today';
 
-    response = await fetch(`${config.historyApiUrl}/${date}`);
+    response = await fetch(`${config.historyApiUrl}/${day}`);
     json = await response.json();
 
     await reload();
@@ -157,12 +170,15 @@ async function updateTrackConfig(sessionId) {
 
 
 async function reload() {
+    document.getElementById('loading-div').classList.remove('hidden');
+    document.getElementById('controls').classList.add('hidden');
     element.innerHTML = '';
     let session = undefined;
     let kart = undefined;
     let fastest = undefined;
 
     const shadowDom = document.createElement('div');
+
     for (const e of json) {
         const groupElement = document.createElement('div');
         if (session != e.session) {
@@ -265,6 +281,7 @@ async function reload() {
     element.appendChild(shadowDom);
     document.getElementById('main').classList.add('hidden');
     await new Promise(resolve => setTimeout(resolve, 1000));
-    document.getElementById('loading').remove();
+    document.getElementById('loading-div').classList.add('hidden');
     document.getElementById('main').classList.remove('hidden');
+    document.getElementById('controls').classList.remove('hidden');
 }
