@@ -100,6 +100,27 @@ td {
         width: 58px;
         height: 58px;
     }
+
+    #controls {
+        font-size: 2.5rem;
+    }
+
+    #date {
+        margin: 8px;
+        padding: 8px;
+        font-size: 2.7rem;
+        width: 200px;
+    }
+
+    .flatpickr-mobile {
+        font-size: 3rem;
+        height: 100px;
+    }
+
+    .btn {
+        padding: 23px;
+        font-size: 2rem;
+    }
 }
 
     /*body {
