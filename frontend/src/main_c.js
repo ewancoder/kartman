@@ -170,6 +170,7 @@ async function updateTrackConfig(sessionId) {
 
 
 async function reload() {
+    document.getElementById('no-sessions').classList.add('hidden');
     document.getElementById('loading-div').classList.remove('hidden');
     document.getElementById('controls').classList.add('hidden');
     element.innerHTML = '';
@@ -284,4 +285,8 @@ async function reload() {
     document.getElementById('loading-div').classList.add('hidden');
     document.getElementById('main').classList.remove('hidden');
     document.getElementById('controls').classList.remove('hidden');
+
+    if (json.length == 0) {
+        document.getElementById('no-sessions').classList.remove('hidden');
+    }
 }
