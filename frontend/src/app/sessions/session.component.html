@@ -1,6 +1,6 @@
 <kman-session-info [session]="session" (click)="toggleHideOrLoad()" />
 
-<div class="session-data" [ngClass]="{'kman-hidden': hidden}">
+<div class="session-data fade-in" [ngClass]="{'kman-hidden': hidden}">
   @if(shouldLoad()) {
     <kman-session-data [sessionId]="session.sessionId"></kman-session-data>
   } @else {

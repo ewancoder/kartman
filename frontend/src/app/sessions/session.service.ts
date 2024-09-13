@@ -105,6 +105,6 @@ export class SessionService {
                     }
                 ]
             }
-        ]).pipe(delay(1000));
+        ]).pipe(delay(5000));
     }
 }
