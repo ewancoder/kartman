@@ -1,11 +1,11 @@
 <kman-session-info [session]="session" (click)="toggleHideOrLoad()" />
 
 <div class="session-data" [ngClass]="{'kman-hidden': hidden}">
-  @if(!lazy) {
+  @if(shouldLoad()) {
     <kman-session-data [sessionId]="session.sessionId"></kman-session-data>
   } @else {
-    <div class="show-more">
-      <a (click)="lazy = false">Load</a>
+    <div class="show-more" (click)="toggleHideOrLoad()">
+      <a>Load</a>
     </div>
   }
 </div>

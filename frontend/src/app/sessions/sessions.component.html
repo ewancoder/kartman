@@ -8,6 +8,6 @@
     <input #datepicker />
   </div>
   @for (session of sessions$ | async; track session.sessionId; let index = $index) {
-    <kman-session [session]="session" [lazy]="index > 4"></kman-session>
+    <kman-session [session]="session" [lazy]="index >= 9" [deferLoadByMs]="index * 50"></kman-session>
   }
 </div>
