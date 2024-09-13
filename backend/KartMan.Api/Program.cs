@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using KartMan.Api;
 using KartMan.Host;
@@ -116,28 +115,10 @@ app.MapGet("/api/sessions-ng/{dateString}", async (string dateString) =>
         ? DateTime.UtcNow
         : DateTime.ParseExact(dateString, "dd-MM-yyyy", null);
 
-    var history = await repository.GetHistoryForDayAsync(DateOnly.FromDateTime(date));
+    var infos = await repository.GetSessionInfosForDay(DateOnly.FromDateTime(date));
 
-    var sessions = history
-        .GroupBy(x => x.SessionId)
-        .Select(x => x.OrderBy(s => s.recordedAtUtc).First())
-        .Select(x => new { x.SessionId, SessionStartTime = x.recordedAtUtc })
-        .ToList();
-
-    var infos = new List<SessionInfoNg>();
-    foreach (var session in sessions)
-    {
-        var sessionInfo = await repository.GetSessionInfoAsync(session.SessionId);
-
-        infos.Add(new SessionInfoNg(
-            session.SessionId,
-            $"Session {session.SessionId.Split('-')[1]}",
-            session.SessionStartTime,
-            new WeatherInfoNg(
-                sessionInfo?.AirTempC)));
-    }
-
-    return infos.OrderByDescending(s => s.StartedAt);
+    // Should already be ordered but consider moving that logic here.
+    return infos;
 });
 
 app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
@@ -148,9 +129,14 @@ app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
         .GroupBy(x => x.kart)
         .Select(g => new
         {
-            Kart = g.First().kart,
-            KartName = g.First().kart,
-            Laps = g.Select(l => new
+            First = g.First(),
+            Entries = g
+        })
+        .Select(g => new
+        {
+            Kart = g.First,
+            KartName = g.First.kart,
+            Laps = g.Entries.Select(l => new
             {
                 LapNumber = l.lap,
                 LapTime = l.time

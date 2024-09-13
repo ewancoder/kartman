@@ -67,6 +67,55 @@ public sealed class HistoryDataRepository
         _db = builder.Build();
     }
 
+    public async Task<IEnumerable<SessionInfoNg>> GetSessionInfosForDay(DateOnly day)
+    {
+        using var _ = _logger.AddScoped("Day", day).BeginScope();
+        try
+        {
+            _logger.LogDebug("Getting session infos for day {Day}.", day);
+
+            using var connection = await _db.OpenConnectionAsync();
+
+            using var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+                SELECT s.id, s.recorded_at, s.session, coalesce(w.air_temp, wh.air_temp)
+                FROM session s
+                JOIN weather w ON s.weather_id = w.id
+                JOIN weather_history wh ON w.weather_history_id = wh.id
+                WHERE s.day = @day
+                ORDER BY DESCENDING s.recorded_at
+            ";
+            command.Parameters.AddWithValue("day", day.DayNumber);
+
+            _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
+            var list = new List<SessionInfoNg>();
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    var sessionId = reader.GetString(0);
+                    var recordedAt = reader.GetDateTime(1);
+                    var session = reader.GetInt32(2);
+                    var airTemp = reader.GetDecimal(3);
+
+                    list.Add(new(
+                        sessionId,
+                        $"Session {session}",
+                        recordedAt,
+                        new(airTemp)));
+                }
+            }
+
+            return list;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Failed to get day history.");
+            throw;
+        }
+    }
+
     public async Task<IEnumerable<LapEntry>> GetHistoryForDayAsync(DateOnly day)
     {
         using var _ = _logger.AddScoped("Day", day).BeginScope();
