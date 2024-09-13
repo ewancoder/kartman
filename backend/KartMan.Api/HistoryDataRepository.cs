@@ -91,7 +91,7 @@ public sealed class HistoryDataRepository
             using var command = connection.CreateCommand();
 
             command.CommandText = """
-                SELECT d.kart, d.lap, d.laptime
+                SELECT d.kart, d.lap, d.laptime, d.id, d.invalid_lap
                 FROM lap_data d
                 WHERE d.session_id = @sessionId
             """;
@@ -106,9 +106,12 @@ public sealed class HistoryDataRepository
                     var kart = reader.GetString(0);
                     var lap = reader.GetInt32(1);
                     var time = reader.GetDecimal(2);
+                    var lapId = reader.GetInt64(3);
+                    var invalidLap = !await reader.IsDBNullAsync(4)
+                        && reader.GetBoolean(4);
 
                     // TODO: Consider storing unique Kart IDs for each separate driving session.
-                    list.Add(new(kart, lap, time));
+                    list.Add(new(lapId, kart, lap, time, invalidLap));
                 }
             }
 
@@ -119,6 +122,22 @@ public sealed class HistoryDataRepository
             _logger.LogError(exception, "Failed to get session data");
             throw;
         }
+    }
+
+    public async ValueTask UpdateLapInvalidStatusAsync(long lapId, bool isInvalid)
+    {
+        using var connection = await _db.OpenConnectionAsync();
+        using var command = connection.CreateCommand();
+
+        command.CommandText = """
+            UPDATE lap_data l
+            SET invalid_lap = @isInvalid
+            WHERE l.id = @lapId
+        """;
+        command.Parameters.AddWithValue("lapId", lapId);
+        command.Parameters.AddWithValue("isInvalid", isInvalid);
+
+        await command.ExecuteNonQueryAsync();
     }
 
 

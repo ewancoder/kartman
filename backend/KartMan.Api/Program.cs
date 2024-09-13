@@ -146,6 +146,16 @@ app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
         .ToList();
 });
 
+app.MapPut("/api/history-ng/{sessionId}/{lapId}/invalid", async (long lapId) =>
+{
+    await repository.UpdateLapInvalidStatusAsync(lapId, true);
+});
+
+app.MapPut("/api/history-ng/{sessionId}/{lapId}/valid", async (long lapId) =>
+{
+    await repository.UpdateLapInvalidStatusAsync(lapId, false);
+});
+
 app.UseCors("Cors");
 
 app.Services.GetRequiredService<WeatherGatherer>();
@@ -161,6 +171,8 @@ public record WeatherInfoNg(
     decimal? AirTempC);
 
 public record KartDriveNg(
+    long LapId,
     string Kart,
     int LapNumber,
-    decimal LapTime);
+    decimal LapTime,
+    bool InvalidLap);
