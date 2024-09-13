@@ -16,6 +16,7 @@ export class SessionComponent {
     @Input({required: true}) session!: SessionInfo;
     @Input() lazy: boolean = false;
     @Input() deferLoadByMs: number = 0;
+    @Input() polled: boolean = false;
     hidden: boolean = false;
     shouldLoad: WritableSignal<boolean> = signal(false);
 

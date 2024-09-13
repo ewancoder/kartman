@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { KartDriveData, LapSummary, SessionService } from '../sessions/session.service';
-import { BehaviorSubject, Observable, share, tap } from 'rxjs';
+import { BehaviorSubject, Observable, retry, share, switchMap, tap, timer } from 'rxjs';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { LoaderComponent } from '../loader/loader.component';
 import { KartInfo, KartInfoComponent } from "../kart-info/kart-info.component";
@@ -19,6 +19,7 @@ import { Loader } from '../sessions/sessions.component';
 export class SessionDataComponent {
   data$: Observable<KartDriveData[]> | undefined;
   @Input({required: true}) sessionId!: string;
+  @Input() polled: boolean = false;
   loading$: Observable<boolean> | undefined;
 
   constructor(private sessionService: SessionService) {}
@@ -27,7 +28,13 @@ export class SessionDataComponent {
     const data$ = this.sessionService.getKartDriveData(this.sessionId);
     const loader = new Loader(data$);
 
-    this.data$ = loader.data$;
+    const polledData$ = timer(0, 3000).pipe(
+      switchMap(() => loader.data$),
+      retry(),
+      share()
+    );
+
+    this.data$ = this.polled ? polledData$ : loader.data$;
     this.loading$ = loader.loading$;
   }
 
