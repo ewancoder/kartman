@@ -2,10 +2,6 @@ import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { LapEntry } from '../sessions/session.service';
 
-export interface LapRow extends LapEntry {
-  fastest: boolean
-}
-
 @Component({
   selector: 'kman-lap',
   standalone: true,
@@ -15,5 +11,6 @@ export interface LapRow extends LapEntry {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LapComponent {
-  @Input({required: true}) lap!: LapRow;
+  @Input({required: true}) lap!: LapEntry;
+  @Input() fastest: boolean = false;
 }

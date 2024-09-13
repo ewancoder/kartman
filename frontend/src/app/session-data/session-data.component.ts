@@ -30,7 +30,7 @@ export class SessionDataComponent {
 
     const polledData$ = timer(0, 3000).pipe(
       switchMap(() => loader.data$),
-      retry(),
+      retry(3),
       share()
     );
 

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { LapEntry } from '../sessions/session.service';
-import { LapComponent, LapRow } from '../lap/lap.component';
+import { LapComponent } from '../lap/lap.component';
 import { NgClass } from '@angular/common';
 
 @Component({
@@ -12,15 +12,4 @@ import { NgClass } from '@angular/common';
 })
 export class LapGroupComponent {
   @Input({required: true}) laps!: LapEntry[];
-  lapRows: LapRow[] | undefined;
-
-  ngOnInit() {
-    const minLaptime = Math.min(...this.laps.map(entry => entry.lapTime));
-    this.lapRows = this.laps.map(entry => {
-      return {
-        ...entry,
-        fastest: entry.lapTime === minLaptime
-      };
-    });
-  }
 }
