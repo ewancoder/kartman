@@ -124,6 +124,64 @@ public sealed class HistoryDataRepository
         }
     }
 
+    public async Task<IEnumerable<LapEntry>> GetHistoryForSessionAsync(string sessionId)
+    {
+        using var _ = _logger.AddScoped("SessionId", sessionId).BeginScope();
+        try
+        {
+            _logger.LogDebug("Getting history for day {Day}.", sessionId);
+
+            using var connection = await _db.OpenConnectionAsync();
+
+            using var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+                SELECT d.recorded_at, s.session, s.total_length, d.kart, d.lap, d.laptime, d.position, d.gap
+                FROM lap_data d
+                JOIN session s ON d.session_id = s.id
+                WHERE s.id = @sessionId
+            ";
+
+            command.Parameters.AddWithValue("sessionId", sessionId);
+
+            _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
+            var list = new List<LapEntry>();
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    var recordedAtUtc = reader.GetDateTime(0);
+                    var session = reader.GetInt32(1);
+                    var totalLength = reader.GetString(2);
+                    var kart = reader.GetString(3);
+                    var lap = reader.GetInt32(4);
+                    var time = reader.GetDecimal(5);
+                    var position = reader.GetInt32(6);
+                    var gap = (await reader.IsDBNullAsync(7))
+                        ? null
+                        : reader.GetString(7);
+
+                    list.Add(new LapEntry(
+                        recordedAtUtc,
+                        session,
+                        totalLength,
+                        kart,
+                        lap,
+                        time,
+                        position,
+                        gap));
+                }
+            }
+
+            return list;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Failed to get day history.");
+            throw;
+        }
+    }
+
     public async Task SaveLapAsync(DateOnly day, LapEntry entry)
     {
         var _ = _logger.AddScoped("Day", day);
