@@ -126,7 +126,7 @@ app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
     var history = await repository.GetHistoryForSessionAsync(sessionId);
 
     return history
-        .GroupBy(x => x.kart)
+        .GroupBy(x => x.Kart)
         .Select(g => new
         {
             First = g.First(),
@@ -134,12 +134,12 @@ app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
         })
         .Select(g => new
         {
-            KartId = g.First.kart, // TODO: Return database kart id for specific kart drive entity.
-            KartName = g.First.kart,
+            KartId = g.First.Kart, // TODO: Return database kart id for specific kart drive entity.
+            KartName = g.First.Kart,
             Laps = g.Entries.Select(l => new
             {
-                LapNumber = l.lap,
-                LapTime = l.time
+                LapNumber = l.LapNumber,
+                LapTime = l.LapTime
             }).OrderBy(x => x.LapNumber).ToList()
         })
         .OrderBy(x => x.KartName) // TODO: Order so 14 is after 2, not before.
@@ -159,3 +159,8 @@ public record SessionInfoNg(
 
 public record WeatherInfoNg(
     decimal? AirTempC);
+
+public record KartDriveNg(
+    string Kart,
+    int LapNumber,
+    decimal LapTime);
