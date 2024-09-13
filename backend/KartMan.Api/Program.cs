@@ -134,7 +134,7 @@ app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
         })
         .Select(g => new
         {
-            Kart = g.First,
+            KartId = g.First.kart, // TODO: Return database kart id for specific kart drive entity.
             KartName = g.First.kart,
             Laps = g.Entries.Select(l => new
             {
@@ -142,6 +142,7 @@ app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
                 LapTime = l.time
             }).OrderBy(x => x.LapNumber).ToList()
         })
+        .OrderBy(x => x.KartName) // TODO: Order so 14 is after 2, not before.
         .ToList();
 });
 

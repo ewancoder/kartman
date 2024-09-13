@@ -84,7 +84,7 @@ public sealed class HistoryDataRepository
                 JOIN weather w ON s.weather_id = w.id
                 JOIN weather_history wh ON w.weather_history_id = wh.id
                 WHERE s.day = @day
-                ORDER BY DESCENDING s.recorded_at
+                ORDER BY s.recorded_at DESC
             ";
             command.Parameters.AddWithValue("day", day.DayNumber);
 
