@@ -1,0 +1,15 @@
+@import '../../styles.scss';
+
+.lap-row {
+    margin: 0;
+    padding: 0 5px;
+    line-height: 24px;
+    font-size: 1.1rem;
+    text-wrap: nowrap;
+}
+
+.fastest {
+    color: $fastestLaptimeColor;
+    font-weight: bold;
+    font-size: 1.2rem;
+}

@@ -1,0 +1,13 @@
+<div class="vertical-flex">
+  @if(loading$ | async) {
+    <kman-loader/>
+  }
+
+  <div class="datepicker">
+    <span class="title">Date</span>
+    <input #datepicker />
+  </div>
+  @for (session of sessions$ | async; track session.sessionId; let index = $index) {
+    <kman-session [session]="session" [lazy]="index > 4"></kman-session>
+  }
+</div>

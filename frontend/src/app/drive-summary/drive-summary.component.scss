@@ -1,0 +1,19 @@
+@import '../../styles.scss';
+
+td {
+    padding: 0 10px;
+}
+
+table {
+    background-color: #eef;
+}
+
+.fastest-laptime {
+    color: $fastestLaptimeColor;
+    font-weight: bold;
+}
+
+.average-laptime {
+    color: $averageLaptimeColor;
+    font-weight: bold;
+}

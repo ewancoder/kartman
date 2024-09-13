@@ -1,0 +1,18 @@
+<table>
+  <tr>
+    <td>Total</td>
+    <td>{{summary.totalLaps}}</td>
+  </tr>
+  <tr>
+    <td>Fastest N</td>
+    <td>{{summary.fastestLap}}</td>
+  </tr>
+  <tr>
+    <td>Fastest</td>
+    <td class="fastest-laptime">{{summary.fastestLapTime | number : '.2-2'}}</td>
+  </tr>
+  <tr>
+    <td>Average</td>
+    <td class="average-laptime">{{summary.averageLapTime | number : '.2-2'}}</td>
+  </tr>
+</table>
