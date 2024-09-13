@@ -28,6 +28,7 @@ export class SessionComponent {
     }
 
     toggleHideOrLoad(): void {
+      console.log('test');
       if (!this.lazy) {
         this.hidden = !this.hidden;
       } else {

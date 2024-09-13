@@ -19,6 +19,8 @@ export interface LapSummary {
     fastestLap: number;
     averageLapTime: number;
     fastestLapTime: number;
+    slowestLapTime: number;
+    consistency: number;
 }
 
 export interface SessionInfo {
