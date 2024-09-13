@@ -1,0 +1,15 @@
+.show-more {
+    @media (max-width: 600px) {
+        text-align: center;
+    }
+
+    a {
+        cursor: pointer;
+        color: #488;
+        font-size: 1.3rem;
+    }
+}
+
+.session-data {
+    padding: 5px 15px;
+}

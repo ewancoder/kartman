@@ -1,0 +1,29 @@
+$fastestLaptimeColor: #80c;
+$averageLaptimeColor: rgb(11, 105, 11);
+
+body {
+    background-color: #fefefe;
+    color: #444;
+    font-family: monospace;
+    font-size: 1.1rem;
+
+    @media (max-width: 600px) {
+        margin: 10px 3px;
+    }
+}
+
+.kman-hidden {
+    display: none;
+}
+
+.kman-block {
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.flatpickr-input {
+    height: 40px;
+    width: 150px;
+    font-size: 1.1rem;
+}
+
