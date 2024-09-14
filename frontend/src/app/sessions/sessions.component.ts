@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import { BehaviorSubject, catchError, combineLatest, defer, delay, finalize, iif, map, merge, Observable, of, race, raceWith, retry, share, startWith, Subject, switchMap, take, tap, timer } from 'rxjs';
 import { SessionInfo, SessionService } from './session.service';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { SessionComponent } from './session.component';
 import { LoaderComponent } from '../loader/loader.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +10,7 @@ import flatpickr from 'flatpickr';
 @Component({
     selector: 'kman-sessions',
     standalone: true,
-    imports: [AsyncPipe, SessionComponent, LoaderComponent],
+    imports: [AsyncPipe, SessionComponent, LoaderComponent, NgClass],
     templateUrl: './sessions.component.html',
     styleUrl: './sessions.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -40,6 +40,16 @@ export class SessionsComponent {
         });
     }
 
+    openCurrent(): void {
+        this.datepickerElement.nativeElement.value = '';
+        this.reroute('current');
+    }
+
+    openToday(): void {
+        this.datepickerElement.nativeElement.value = '';
+        this.reroute('today');
+    }
+
     private reroute(dateValue: string): void {
         this.router.navigate(['../', dateValue], { relativeTo: this.activatedRoute });
         this.day = dateValue;
@@ -47,7 +57,7 @@ export class SessionsComponent {
     }
 
     private loadData() {
-        if (this.day === 'today') {
+        if (this.day === 'today' || this.day === 'current') {
             this.shouldPoll = true;
         } else {
             const [day, month, year] = this.day.split('-');
@@ -59,7 +69,7 @@ export class SessionsComponent {
                 && now.getFullYear() === date.getFullYear();
         }
 
-        const sessions$ = this.sessionService.getSessions(this.day);
+        const sessions$ = this.sessionService.getSessions(this.day === 'current' ? 'today' : this.day);
 
         const loader = new Loader(sessions$);
 

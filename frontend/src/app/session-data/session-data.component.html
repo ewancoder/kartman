@@ -2,7 +2,7 @@
   <kman-loader/>
 }
 
-<div class="karts-container">
+<div class="karts-container" [ngClass]="{'centered': centered}">
   @for (data of data$ | async; track data.kartId) {
     <kman-kart-card [data]="data" />
   }

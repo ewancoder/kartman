@@ -17,6 +17,7 @@ import { KartCardComponent } from '../kart-card/kart-card.component';
 })
 export class SessionDataComponent {
   data$: Observable<KartDriveData[]> | undefined;
+  @Input() centered: boolean = false;
   @Input({required: true}) sessionId!: string;
   private _polled: boolean = false;
   @Input() set polled(value: boolean) {

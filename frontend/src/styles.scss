@@ -1,9 +1,17 @@
+$background-color: #fefefe;
 $fastestLaptimeColor: #80c;
 $averageLaptimeColor: rgb(11, 105, 11);
 $slowestLaptimeColor: rgb(164, 6, 6);
 
+html, body {
+    height: 100%;
+}
+
 body {
-    background-color: #fefefe;
+    margin: 0;
+    padding: 0;
+
+    background-color: $background-color;
     color: #444;
     font-family: monospace;
     font-size: 1.1rem;
@@ -18,7 +26,6 @@ body {
 }
 
 .kman-block {
-    margin: 10px 0;
     padding: 10px;
 }
 

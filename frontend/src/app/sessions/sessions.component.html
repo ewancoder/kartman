@@ -1,13 +1,22 @@
-<div class="vertical-flex">
-  @if(loading$ | async) {
-    <kman-loader/>
-  }
+@if (day === 'current') {
+  <iframe class="kart-timer" frameborder="no" src="https://kart-timer.com/drivers/?p=livescreen&track=110"></iframe>
+}
 
+@if (loading$ | async) {
+  <kman-loader/>
+}
+
+<div class="second-container" [ngClass]="{'second-container-reverse': day === 'current'}">
   <div class="datepicker">
+    <button class="btn" (click)="openCurrent()">Current session</button>
     <span class="title">Date</span>
     <input #datepicker />
+    <button class="btn" (click)="openToday()">Today</button>
   </div>
+
   @for (session of sessions$ | async; track session.sessionId; let index = $index) {
-    <kman-session [session]="session" [lazy]="index >= 9" [deferLoadByMs]="index >= 9 ? 0 : index * 50" [polled]="index === 0 && shouldPoll"></kman-session>
+    @if (day !== 'current' || index === 0) {
+      <kman-session [centered]="day === 'current'" [session]="session" [lazy]="index >= 9" [deferLoadByMs]="index >= 9 ? 0 : index * 50" [polled]="index === 0 && shouldPoll"></kman-session>
+    }
   }
 </div>

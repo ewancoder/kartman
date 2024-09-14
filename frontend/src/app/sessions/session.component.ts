@@ -17,6 +17,7 @@ export class SessionComponent {
     @Input() lazy: boolean = false;
     @Input() deferLoadByMs: number = 0;
     @Input() polled: boolean = false;
+    @Input() centered: boolean = false;
     hidden: boolean = false;
     shouldLoad: WritableSignal<boolean> = signal(false);
 
@@ -29,7 +30,6 @@ export class SessionComponent {
     }
 
     toggleHideOrLoad(): void {
-      console.log('test');
       if (!this.lazy) {
         this.hidden = !this.hidden;
       } else {
@@ -44,7 +44,6 @@ export class SessionComponent {
       } else {
         setTimeout(() => {
           this.shouldLoad.set(true);
-          console.log('should show up');
         }, this.deferLoadByMs);
       }
     }
