@@ -1,5 +1,7 @@
+@import '../../styles.scss';
+
 .show-more {
-    @media (max-width: 600px) {
+    @media (max-width: $mobileWidth) {
         text-align: center;
     }
 

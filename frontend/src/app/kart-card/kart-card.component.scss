@@ -1,3 +1,5 @@
+@import '../../styles.scss';
+
 .kart-info {
     margin: 5px 0;
 }
@@ -5,7 +7,7 @@
 .horizontal-flex {
     display: flex;
 
-    @media (max-width: 600px) {
+    @media (max-width: $mobileWidth) {
         flex-direction: row-reverse;
         justify-content: space-between;
         flex-wrap: wrap;
