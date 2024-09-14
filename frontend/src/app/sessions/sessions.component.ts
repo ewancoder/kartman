@@ -20,6 +20,7 @@ export class SessionsComponent {
     @ViewChild('datepicker') datepickerElement!: any; // TODO: Use proper type here.
     sessions$: Observable<SessionInfo[]> | undefined;
     loading$: Observable<boolean> | undefined;
+    shouldPoll: boolean = false;
 
     constructor(
         private sessionService: SessionService,
@@ -46,6 +47,18 @@ export class SessionsComponent {
     }
 
     private loadData() {
+        if (this.day === 'today') {
+            this.shouldPoll = true;
+        } else {
+            const [day, month, year] = this.day.split('-');
+            const date = new Date(+year, +month - 1, +day);
+            const now = new Date();
+
+            this.shouldPoll = now.getDate() === date.getDate()
+                && now.getMonth() === date.getMonth()
+                && now.getFullYear() === date.getFullYear();
+        }
+
         const sessions$ = this.sessionService.getSessions(this.day);
 
         const loader = new Loader(sessions$);
