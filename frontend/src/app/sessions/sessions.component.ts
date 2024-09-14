@@ -41,12 +41,12 @@ export class SessionsComponent {
     }
 
     openCurrent(): void {
-        this.datepickerElement.nativeElement.value = '';
+        this.datepickerElement.nativeElement.value = 'Select date...';
         this.reroute('current');
     }
 
     openToday(): void {
-        this.datepickerElement.nativeElement.value = '';
+        this.datepickerElement.nativeElement.value = 'Today';
         this.reroute('today');
     }
 

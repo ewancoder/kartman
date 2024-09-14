@@ -9,8 +9,7 @@
 <div class="second-container" [ngClass]="{'second-container-reverse': day === 'current'}">
   <div class="datepicker">
     <button class="btn" (click)="openCurrent()">Current session</button>
-    <span class="title">Date</span>
-    <input #datepicker />
+    <input #datepicker value="Select date..." />
     <button class="btn" (click)="openToday()">Today</button>
   </div>
 
