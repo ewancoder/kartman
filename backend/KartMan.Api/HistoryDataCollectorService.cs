@@ -123,12 +123,27 @@ public sealed class HistoryDataCollectorService : IHostedService
                 _logger.LogTrace("Karting data didn't change since last time, not logging it.");
                 return;
             }
-            _previousHash = hash;
-            _lastTelemetryRecordedAtUtc = DateTime.UtcNow;
+
+            var freshStart = _previousHash is null && _lastTelemetryRecordedAtUtc == default;
 
             var rawJson = JsonSerializer.Deserialize<RawJson>(content)
                 ?? throw new InvalidOperationException("Could not deserialize result from karting api.");
             // TODO: Send signalr update here to update the web page, we got new data.
+
+            // A HACK to avoid recording last day data again, if we restarted the app.
+            // Will only work if there were at least 10 sessions in the last day.
+            try
+            {
+                if (Convert.ToInt32(rawJson.headinfo.number) >= 10 && freshStart)
+                    return;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogWarning(exception, "Failed to check headinfo number on the fresh start.");
+            }
+
+            _previousHash = hash;
+            _lastTelemetryRecordedAtUtc = DateTime.UtcNow;
 
             if (_dayEnded && _lastSession == rawJson.headinfo.number)
             {
