@@ -1,4 +1,6 @@
-<kman-session-info [session]="session" [centered]="centered" (click)="toggleHideOrLoad()" />
+<div class="clickable">
+  <kman-session-info [session]="session" [centered]="centered" (click)="toggleHideOrLoad()" />
+</div>
 
 @if(shouldLoad()) {
   <div class="session-data fade-in" [ngClass]="{'kman-hidden': hidden}">
