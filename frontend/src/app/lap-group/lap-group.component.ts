@@ -12,4 +12,9 @@ import { NgClass } from '@angular/common';
 })
 export class LapGroupComponent {
   @Input({required: true}) laps!: LapEntry[];
+  fastestLapTime!: number;
+
+  ngOnInit() {
+    this.fastestLapTime = Math.min(...this.laps.map(lap => lap.lapTime));
+  }
 }

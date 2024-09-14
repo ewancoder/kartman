@@ -1,5 +1,5 @@
 @for (lap of laps; track lap.lapNumber; let odd = $odd) {
   <div class="lap-row">
-    <kman-lap [lap]="lap"></kman-lap>
+    <kman-lap [lap]="lap" [fastest]="fastestLapTime === lap.lapTime"></kman-lap>
   </div>
 }
