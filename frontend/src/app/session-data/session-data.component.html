@@ -2,12 +2,16 @@
   <kman-loader/>
 }
 
-@for (entry of data$ | async; track entry.kartId) {
-  <div class="kart-info">
-    <kman-kart-info [kartInfo]="getKartInfo(entry)"/>
-  </div>
-  <div class="horizontal-flex">
-    <kman-drive-summary [summary]="getSummary(entry)" />
-    <kman-lap-group [laps]="entry.laps"/>
-  </div>
-}
+<div class="karts-container">
+  @for (entry of data$ | async; track entry.kartId) {
+    <div class="kart-card">
+      <div class="kart-info">
+        <kman-kart-info [kartInfo]="getKartInfo(entry)"/>
+      </div>
+      <div class="horizontal-flex">
+        <kman-drive-summary [summary]="getSummary(entry)" />
+        <kman-lap-group [laps]="entry.laps"/>
+      </div>
+    </div>
+  }
+</div>
