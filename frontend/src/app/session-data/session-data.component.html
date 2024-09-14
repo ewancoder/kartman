@@ -3,15 +3,7 @@
 }
 
 <div class="karts-container">
-  @for (entry of data$ | async; track entry.kartId) {
-    <div class="kart-card">
-      <div class="kart-info">
-        <kman-kart-info [kartInfo]="getKartInfo(entry)"/>
-      </div>
-      <div class="horizontal-flex">
-        <kman-drive-summary [summary]="getSummary(entry)" />
-        <kman-lap-group [laps]="entry.laps"/>
-      </div>
-    </div>
+  @for (data of data$ | async; track data.kartId) {
+    <kman-kart-card [data]="data" />
   }
 </div>

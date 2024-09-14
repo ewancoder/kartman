@@ -1,3 +1,14 @@
 .lap-row {
     margin: 0 0 0 15px;
+    animation: flash-bg 2s;
+}
+
+@keyframes flash-bg {
+    0% {
+    }
+    50% {
+        background-color: rgb(249, 194, 30);
+    }
+    100% {
+    }
 }

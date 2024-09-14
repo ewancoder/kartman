@@ -1,17 +1,3 @@
-.kart-info {
-    margin: 5px 0;
-}
-
-.horizontal-flex {
-    display: flex;
-
-    @media (max-width: 600px) {
-        flex-direction: row-reverse;
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
-}
-
 .karts-container {
 
     @media (min-width: 600px) {

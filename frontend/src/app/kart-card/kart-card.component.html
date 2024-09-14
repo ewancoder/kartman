@@ -1,0 +1,9 @@
+<div class="kart-card">
+  <div class="kart-info">
+    <kman-kart-info [kartInfo]="getKartInfo(data)"/>
+  </div>
+  <div class="horizontal-flex">
+    <kman-drive-summary [summary]="getSummary(data)" />
+    <kman-lap-group [laps]="data.laps"/>
+  </div>
+</div>
