@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
-import { BehaviorSubject, catchError, combineLatest, defer, delay, finalize, iif, map, merge, Observable, of, race, raceWith, share, startWith, Subject, switchMap, take, tap, timer } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, defer, delay, finalize, iif, map, merge, Observable, of, race, raceWith, retry, share, startWith, Subject, switchMap, take, tap, timer } from 'rxjs';
 import { SessionInfo, SessionService } from './session.service';
 import { AsyncPipe } from '@angular/common';
 import { SessionComponent } from './session.component';
@@ -64,7 +64,17 @@ export class SessionsComponent {
         const loader = new Loader(sessions$);
 
         this.loading$ = loader.loading$;
-        this.sessions$ = loader.data$;
+
+        // TODO: Refactor duplicated code.
+        const polledData$ = timer(0, 20000).pipe(
+            switchMap(() => loader.data$),
+            retry(3),
+            share()
+        );
+
+        this.sessions$ = this.shouldPoll
+            ? polledData$
+            : loader.data$;
     }
 }
 
