@@ -1,11 +1,7 @@
 <kman-session-info [session]="session" [centered]="centered" (click)="toggleHideOrLoad()" />
 
-<div class="session-data fade-in" [ngClass]="{'kman-hidden': hidden}">
-  @if(shouldLoad()) {
+@if(shouldLoad()) {
+  <div class="session-data fade-in" [ngClass]="{'kman-hidden': hidden}">
     <kman-session-data [sessionId]="session.sessionId" [polled]="polled" [centered]="centered"></kman-session-data>
-  } @else {
-    <div class="show-more" (click)="toggleHideOrLoad()">
-      <a>Load</a>
-    </div>
-  }
-</div>
+  </div>
+}
