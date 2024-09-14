@@ -8,6 +8,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E2B48D0-3B7B-4797-BB4E-032EAA583014}"
 	ProjectSection(SolutionItems) = preProject
 		db\migrations\20240605132519_initial.sql = db\migrations\20240605132519_initial.sql
+		db\migrations\20240913194518_invalid_lap_field.sql = db\migrations\20240913194518_invalid_lap_field.sql
+		db\migrations\20240913200020_invalid_lap_field.sql = db\migrations\20240913200020_invalid_lap_field.sql
 	EndProjectSection
 EndProject
 Global
