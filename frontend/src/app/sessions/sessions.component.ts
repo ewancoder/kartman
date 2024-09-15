@@ -38,8 +38,8 @@ export class SessionsComponent {
             dateFormat: 'd-m-Y',
             onChange: (_, dateStr) => {
                 this.reroute(dateStr);
-            },
-            parseDate: input => new Date() // If invalid date is supplied - use today.
+            }//,
+            //parseDate: input => new Date() // If invalid date is supplied - use today.
         });
     }
 
