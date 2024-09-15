@@ -34,9 +34,14 @@ export class TimingComponent {
     this.currentSessionId = session.sessionId;
 
     const data$ = this.sessionService.getKartDriveData(this.currentSessionId);
+    const polledData$ = timer(0, 3000).pipe(
+        switchMap(() => data$),
+        retry(3),
+        share()
+    );
 
     this.timing$Signal?.set(
-      data$.pipe(map(data => data.map(x => this.getKartData(x)))));
+      polledData$.pipe(map(data => data.map(x => this.getKartData(x)))));
   }
 
   private getKartData(data: KartDriveData): KartTiming {
