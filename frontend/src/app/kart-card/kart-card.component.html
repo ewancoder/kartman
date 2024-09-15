@@ -4,6 +4,8 @@
   </div>
   <div class="horizontal-flex">
     <kman-drive-summary [summary]="getSummary(data)" />
-    <kman-lap-group [laps]="data.laps"/>
+    <div class="laps-row">
+      <kman-lap-group [laps]="data.laps"/>
+    </div>
   </div>
 </div>
