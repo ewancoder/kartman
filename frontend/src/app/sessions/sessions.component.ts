@@ -4,13 +4,13 @@ import { SessionInfo, SessionService } from './session.service';
 import { AsyncPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { SessionComponent } from './session.component';
 import { LoaderComponent } from '../loader/loader.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import flatpickr from 'flatpickr';
 
 @Component({
     selector: 'kman-sessions',
     standalone: true,
-    imports: [AsyncPipe, SessionComponent, LoaderComponent, NgClass],
+    imports: [AsyncPipe, SessionComponent, LoaderComponent, NgClass, RouterLink, RouterLinkActive],
     templateUrl: './sessions.component.html',
     styleUrl: './sessions.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
