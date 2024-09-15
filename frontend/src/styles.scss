@@ -2,7 +2,7 @@ $background-color: #fefefe;
 $fastestLaptimeColor: #80c;
 $averageLaptimeColor: rgb(11, 105, 11);
 $slowestLaptimeColor: rgb(164, 6, 6);
-$mobileWidth: 800px;
+$mobileWidth: 700px;
 
 html, body {
     height: 100%;
@@ -16,10 +16,6 @@ body {
     color: #444;
     font-family: monospace;
     font-size: 1.1rem;
-
-    @media (max-width: $mobileWidth) {
-        margin: 10px 3px;
-    }
 }
 
 .kman-hidden {

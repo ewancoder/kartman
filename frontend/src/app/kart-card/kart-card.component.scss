@@ -7,17 +7,12 @@
 .horizontal-flex {
     display: flex;
     flex-wrap: wrap;
-
-    /*@media (max-width: $mobileWidth) {
-        flex-direction: row-reverse;
-        justify-content: space-between;
-    }*/
 }
 
 .laps-row {
-    min-width: 150px;
+    min-width: 145px;
 }
 
 .laps-summary {
-    min-width: 180px;
+    min-width: 175px;
 }
