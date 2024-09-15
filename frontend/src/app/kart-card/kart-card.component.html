@@ -3,7 +3,9 @@
     <kman-kart-info [kartInfo]="getKartInfo(data)"/>
   </div>
   <div class="horizontal-flex">
-    <kman-drive-summary [summary]="getSummary(data)" />
+    <div class="laps-summary">
+      <kman-drive-summary [summary]="getSummary(data)" />
+    </div>
     <div class="laps-row">
       <kman-lap-group [laps]="data.laps"/>
     </div>

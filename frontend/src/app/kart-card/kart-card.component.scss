@@ -6,14 +6,18 @@
 
 .horizontal-flex {
     display: flex;
+    flex-wrap: wrap;
 
-    @media (max-width: $mobileWidth) {
+    /*@media (max-width: $mobileWidth) {
         flex-direction: row-reverse;
         justify-content: space-between;
-        flex-wrap: wrap;
-    }
+    }*/
 }
 
 .laps-row {
     min-width: 150px;
+}
+
+.laps-summary {
+    min-width: 180px;
 }
