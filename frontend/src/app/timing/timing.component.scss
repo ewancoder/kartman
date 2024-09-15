@@ -1,12 +1,13 @@
+@import '../../styles.scss';
+
 .timing {
     color: black;
-    font-size: 4vw;
+    font-size: clamp(1rem, 4.5vw, 50rem); 
     font-weight: bold;
-    width: 100%;
 }
 
 .timing-value {
-    padding: 0 200px;
+    padding: 0 5vw;
 }
 
 .positive {
@@ -19,6 +20,10 @@
 
 .good {
     color: green;
+}
+
+.fastest {
+    color: $fastestLaptimeColor;
 }
 
 .odd {

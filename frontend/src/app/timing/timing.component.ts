@@ -41,14 +41,14 @@ export class TimingComponent {
 
   private getKartData(data: KartDriveData): KartTiming {
     const kartName = data.kartName;
-    const minLapTime = Math.min(...data.laps.map(lap => lap.lapTime));
-    const minLapN = data.laps.find(lap => lap.lapTime === minLapTime)?.lapNumber;
+    const bestLapTime = Math.min(...data.laps.map(lap => lap.lapTime));
+    const minLapN = data.laps.find(lap => lap.lapTime === bestLapTime)?.lapNumber;
     const lastLapTime = data.laps.at(-1)?.lapTime;
-    const delta = lastLapTime! - minLapTime;
+    const delta = lastLapTime! - bestLapTime;
 
     return {
       kartName: kartName,
-      minLapTime: minLapTime,
+      bestLapTime: bestLapTime,
       minLapN: minLapN!,
       lastLapTime: lastLapTime!,
       delta: delta
@@ -58,7 +58,7 @@ export class TimingComponent {
 
 export interface KartTiming {
   kartName: string;
-  minLapTime: number;
+  bestLapTime: number;
   minLapN: number;
   lastLapTime: number;
   delta: number;
