@@ -1,0 +1,9 @@
+<table class="timing">
+@for (timing of timing$Signal() | async; track timing.kartName; let odd = $odd) {
+    <tr [ngClass]="{'odd': odd}">
+        <td class="timing-value">{{timing.kartName}}</td>
+        <td class="timing-value">{{timing.lastLapTime | number: '.2-3'}}</td>
+        <td class="timing-value" [ngClass]="{'positive': timing.delta > 0, 'bad': timing.delta > 0.5, 'good': timing.delta < 0}">{{timing.delta > 0 ? '+' : ''}}{{timing.delta | number: '.2-3'}}</td>
+    </tr>
+}
+</table>
