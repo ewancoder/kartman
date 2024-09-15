@@ -1,5 +1,7 @@
 @if (day === 'current') {
-  <iframe class="kart-timer" frameborder="no" src="https://kart-timer.com/drivers/?p=livescreen&track=110"></iframe>
+  <div class="kart-timer">
+    <iframe frameborder="no" src="https://kart-timer.com/drivers/?p=livescreen&track=110"></iframe>
+  </div>
 }
 
 @if (loading$ | async) {
