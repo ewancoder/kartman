@@ -33,6 +33,8 @@ export class SessionsComponent {
 
     ngAfterViewInit(): void {
         flatpickr(this.datepickerElement.nativeElement, {
+            minDate: new Date(2024, 6, 7),
+            maxDate: new Date(),
             dateFormat: 'd-m-Y',
             onChange: (_, dateStr) => {
                 this.reroute(dateStr);
