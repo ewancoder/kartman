@@ -21,6 +21,7 @@ export class SessionsComponent {
     sessions$: Observable<SessionInfo[]> | undefined;
     loading$: Observable<boolean> | undefined;
     shouldPoll: boolean = false;
+    flatpickr: any;
 
     constructor(
         private sessionService: SessionService,
@@ -32,7 +33,7 @@ export class SessionsComponent {
     }
 
     ngAfterViewInit(): void {
-        flatpickr(this.datepickerElement.nativeElement, {
+        this.flatpickr = flatpickr(this.datepickerElement.nativeElement, {
             minDate: new Date(2024, 6, 7),
             maxDate: new Date(),
             dateFormat: 'd-m-Y',
@@ -44,12 +45,16 @@ export class SessionsComponent {
     }
 
     openCurrent(): void {
-        this.datepickerElement.nativeElement.value = 'Select date...';
+        this.flatpickr.setDate(new Date());
+        this.datepickerElement.nativeElement.value = '';
+        this.datepickerElement.nativeElement.placeholder = 'Select date...';
         this.reroute('current');
     }
 
     openToday(): void {
-        this.datepickerElement.nativeElement.value = 'Today';
+        this.flatpickr.setDate(new Date());
+        this.datepickerElement.nativeElement.value = '';
+        this.datepickerElement.nativeElement.placeholder = 'Today';
         this.reroute('today');
     }
 
