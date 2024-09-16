@@ -1,5 +1,27 @@
 import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
-import { BehaviorSubject, catchError, combineLatest, defer, delay, finalize, iif, map, merge, Observable, of, race, raceWith, retry, share, startWith, Subject, switchMap, take, tap, timer } from 'rxjs';
+import {
+    BehaviorSubject,
+    catchError,
+    combineLatest,
+    defer,
+    delay,
+    finalize,
+    iif,
+    map,
+    merge,
+    Observable,
+    of,
+    race,
+    raceWith,
+    retry,
+    share,
+    startWith,
+    Subject,
+    switchMap,
+    take,
+    tap,
+    timer
+} from 'rxjs';
 import { SessionInfo, SessionService } from './session.service';
 import { AsyncPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { SessionComponent } from './session.component';
@@ -26,7 +48,8 @@ export class SessionsComponent {
     constructor(
         private sessionService: SessionService,
         private router: Router,
-        private activatedRoute: ActivatedRoute) { }
+        private activatedRoute: ActivatedRoute
+    ) {}
 
     ngOnInit(): void {
         this.loadData();
@@ -39,7 +62,7 @@ export class SessionsComponent {
             dateFormat: 'd-m-Y',
             onChange: (_, dateStr) => {
                 this.reroute(dateStr);
-            }//,
+            } //,
             //parseDate: input => new Date() // If invalid date is supplied - use today.
         });
     }
@@ -59,7 +82,9 @@ export class SessionsComponent {
     }
 
     private reroute(dateValue: string): void {
-        this.router.navigate(['../', dateValue], { relativeTo: this.activatedRoute });
+        this.router.navigate(['../', dateValue], {
+            relativeTo: this.activatedRoute
+        });
         this.day = dateValue;
         this.loadData();
     }
@@ -72,12 +97,15 @@ export class SessionsComponent {
             const date = new Date(+year, +month - 1, +day);
             const now = new Date();
 
-            this.shouldPoll = now.getDate() === date.getDate()
-                && now.getMonth() === date.getMonth()
-                && now.getFullYear() === date.getFullYear();
+            this.shouldPoll =
+                now.getDate() === date.getDate() &&
+                now.getMonth() === date.getMonth() &&
+                now.getFullYear() === date.getFullYear();
         }
 
-        const sessions$ = this.sessionService.getSessions(this.day === 'current' ? 'today' : this.day);
+        const sessions$ = this.sessionService.getSessions(
+            this.day === 'current' ? 'today' : this.day
+        );
 
         const loader = new Loader(sessions$);
 
@@ -90,9 +118,7 @@ export class SessionsComponent {
             share()
         );
 
-        this.sessions$ = this.shouldPoll
-            ? polledData$
-            : loader.data$;
+        this.sessions$ = this.shouldPoll ? polledData$ : loader.data$;
     }
 }
 
@@ -101,7 +127,10 @@ export class Loader<TResponse> {
     loading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     // TODO: Handle errors.
-    constructor(private source$: Observable<TResponse>, delay: number = 500) {
+    constructor(
+        private source$: Observable<TResponse>,
+        delay: number = 500
+    ) {
         let isLoading = true;
 
         // TODO: Very bad hack. Incorporate this into an observable instead.
@@ -114,7 +143,10 @@ export class Loader<TResponse> {
         }, delay);
 
         this.data$ = source$.pipe(
-            tap(() => { isLoading = false; this.loading$.next(false); }),
+            tap(() => {
+                isLoading = false;
+                this.loading$.next(false);
+            }),
             share()
         );
     }

@@ -1,13 +1,13 @@
 .lap-row {
-    animation: flash-bg 2s;
+  animation: flash-bg 2s;
 }
 
 @keyframes flash-bg {
-    0% {
-    }
-    50% {
-        background-color: rgb(249, 194, 30);
-    }
-    100% {
-    }
+  0% {
+  }
+  50% {
+    background-color: rgb(249, 194, 30);
+  }
+  100% {
+  }
 }

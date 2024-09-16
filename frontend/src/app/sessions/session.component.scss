@@ -1,35 +1,35 @@
 @import '../../styles.scss';
 
 .show-more {
-    a {
-        cursor: pointer;
-        color: #488;
-        font-size: 1.3rem;
-    }
+  a {
+    cursor: pointer;
+    color: #488;
+    font-size: 1.3rem;
+  }
 }
 
 .session-data {
-    padding: 5px 5px;
+  padding: 5px 5px;
 }
 
 .fade-in {
-    animation: fadeIn 0.8s;
+  animation: fadeIn 0.8s;
 }
 
 @keyframes fadeIn {
-    0% {
-        height: 0%;
-        opacity: 0;
-        transform: translateY(-50px);
-    }
+  0% {
+    height: 0%;
+    opacity: 0;
+    transform: translateY(-50px);
+  }
 
-    100% {
-        height: 100%;
-        opacity: 1;
-        transform: translateY(0%);
-    }
+  100% {
+    height: 100%;
+    opacity: 1;
+    transform: translateY(0%);
+  }
 }
 
 .clickable {
-    cursor: pointer;
+  cursor: pointer;
 }

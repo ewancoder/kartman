@@ -1,26 +1,32 @@
 <table>
   <tr>
     <td>Total</td>
-    <td>{{summary.totalLaps}}</td>
+    <td>{{ summary.totalLaps }}</td>
   </tr>
   <tr>
     <td>Fast N</td>
-    <td>{{summary.fastestLap}}</td>
+    <td>{{ summary.fastestLap }}</td>
   </tr>
   <tr>
     <td>Fast</td>
-    <td class="fastest-laptime">{{summary.fastestLapTime | number : '.2-3'}}</td>
+    <td class="fastest-laptime">
+      {{ summary.fastestLapTime | number: '.2-3' }}
+    </td>
   </tr>
   <tr>
     <td>Avg</td>
-    <td class="average-laptime">{{summary.averageLapTime | number : '.2-3'}}</td>
+    <td class="average-laptime">
+      {{ summary.averageLapTime | number: '.2-3' }}
+    </td>
   </tr>
   <tr>
     <td>Slow</td>
-    <td class="slowest-laptime">{{summary.slowestLapTime | number : '.2-3' }}</td>
+    <td class="slowest-laptime">
+      {{ summary.slowestLapTime | number: '.2-3' }}
+    </td>
   </tr>
   <tr>
     <td>Cons.</td>
-    <td>{{summary.consistency | number : '.2-3' }}</td>
+    <td>{{ summary.consistency | number: '.2-3' }}</td>
   </tr>
 </table>

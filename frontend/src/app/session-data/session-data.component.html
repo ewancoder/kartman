@@ -1,8 +1,8 @@
-@if(loading$ | async) {
-  <kman-loader/>
+@if (loading$ | async) {
+  <kman-loader />
 }
 
-<div class="karts-container" [ngClass]="{'centered': centered}">
+<div class="karts-container" [ngClass]="{ centered: centered }">
   @for (data of data$ | async; track data.kartId) {
     <kman-kart-card [data]="data" />
   }

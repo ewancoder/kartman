@@ -1,64 +1,64 @@
 @import '../../styles.scss';
 
 :host {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .controls {
-    margin: 5px 0;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+  margin: 5px 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 $frameHeight: 500px;
 
 iframe {
-    width: 100%;
-    height: $frameHeight;
+  width: 100%;
+  height: $frameHeight;
 }
 
 .kart-timer {
-    width: 100%;
-    height: $frameHeight;
+  width: 100%;
+  height: $frameHeight;
 
-    @media (max-width: $mobileWidth) {
-        display: none;
-    }
+  @media (max-width: $mobileWidth) {
+    display: none;
+  }
 }
 
 .btn {
-    padding: 10px;
-    margin: 5px;
-    border: none;
-    background-color: #0cb;
-    box-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
-    cursor: pointer;
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  background-color: #0cb;
+  box-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
+  cursor: pointer;
 }
 
 .btn-timing {
-    padding: 10px;
-    margin: 5px;
-    border: none;
-    background-color: rgb(230, 209, 25);
-    box-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
-    cursor: pointer;
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  background-color: rgb(230, 209, 25);
+  box-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
+  cursor: pointer;
 }
 
 .btn:hover {
-    box-shadow: 0 2px 5px rgb(0 0 0 / 0.4);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.4);
 }
 .btn:active {
-    box-shadow: 0 0px 5px rgb(0 0 0 / 0.4);
+  box-shadow: 0 0px 5px rgb(0 0 0 / 0.4);
 }
 
 .second-container {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .second-container-reverse {
-    flex-direction: column-reverse;
-    //height: 100%;
+  flex-direction: column-reverse;
+  //height: 100%;
 }

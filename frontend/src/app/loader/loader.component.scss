@@ -3,7 +3,7 @@
 }
 
 .lds-hourglass {
-  color: #1c4c5b
+  color: #1c4c5b;
 }
 .lds-hourglass,
 .lds-hourglass:after {
@@ -16,7 +16,7 @@
   height: 80px;
 }
 .lds-hourglass:after {
-  content: " ";
+  content: ' ';
   display: block;
   border-radius: 50%;
   width: 0;

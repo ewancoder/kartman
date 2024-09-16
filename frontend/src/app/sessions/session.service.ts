@@ -35,13 +35,21 @@ export interface WeatherInfo {
     airTempC: number;
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class SessionService {
     constructor(private http: HttpClient) {}
 
     getSessions(day: string): Observable<SessionInfo[]> {
-        return this.http.get<SessionInfo[]>(`https://api.kartman.typingrealm.com/api/sessions-ng/${day}`)
-            .pipe(map(infos => infos.map(info => ({ ...info, startedAt: new Date(`${info.startedAt}Z`) }))));
+        return this.http
+            .get<SessionInfo[]>(`https://api.kartman.typingrealm.com/api/sessions-ng/${day}`)
+            .pipe(
+                map(infos =>
+                    infos.map(info => ({
+                        ...info,
+                        startedAt: new Date(`${info.startedAt}Z`)
+                    }))
+                )
+            );
 
         return of([
             {
@@ -66,7 +74,9 @@ export class SessionService {
     }
 
     getKartDriveData(sessionId: string): Observable<KartDriveData[]> {
-        return this.http.get<KartDriveData[]>(`https://api.kartman.typingrealm.com/api/history-ng/${sessionId}`);
+        return this.http.get<KartDriveData[]>(
+            `https://api.kartman.typingrealm.com/api/history-ng/${sessionId}`
+        );
 
         return of([
             {

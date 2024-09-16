@@ -4,31 +4,31 @@ $averageLaptimeColor: rgb(11, 105, 11);
 $slowestLaptimeColor: rgb(164, 6, 6);
 $mobileWidth: 700px;
 
-html, body {
-    height: 100%;
+html,
+body {
+  height: 100%;
 }
 
 body {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 
-    background-color: $background-color;
-    color: #444;
-    font-family: monospace;
-    font-size: 1.1rem;
+  background-color: $background-color;
+  color: #444;
+  font-family: monospace;
+  font-size: 1.1rem;
 }
 
 .kman-hidden {
-    display: none;
+  display: none;
 }
 
 .kman-block {
-    padding: 10px;
+  padding: 10px;
 }
 
 .flatpickr-input {
-    height: 40px;
-    width: 150px;
-    font-size: 1.1rem;
+  height: 40px;
+  width: 150px;
+  font-size: 1.1rem;
 }
-

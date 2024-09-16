@@ -1,13 +1,13 @@
 <div class="kart-card">
   <div class="kart-info">
-    <kman-kart-info [kartInfo]="getKartInfo(data)"/>
+    <kman-kart-info [kartInfo]="getKartInfo(data)" />
   </div>
   <div class="horizontal-flex">
     <div class="laps-summary">
       <kman-drive-summary [summary]="getSummary(data)" />
     </div>
     <div class="laps-row">
-      <kman-lap-group [laps]="data.laps"/>
+      <kman-lap-group [laps]="data.laps" />
     </div>
   </div>
 </div>

@@ -1,13 +1,13 @@
 @import '../../styles.scss';
 
 .karts-container {
-    @media (min-width: $mobileWidth) {
-        display: flex;
-        flex-wrap: wrap;
-        column-gap: 10px;
-    }
+  @media (min-width: $mobileWidth) {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 10px;
+  }
 }
 
 .centered {
-    justify-content: center;
+  justify-content: center;
 }

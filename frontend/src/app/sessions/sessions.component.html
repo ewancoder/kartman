@@ -5,10 +5,10 @@
 }
 
 @if (loading$ | async) {
-  <kman-loader/>
+  <kman-loader />
 }
 
-<div class="second-container" [ngClass]="{'second-container-reverse': day === 'current'}">
+<div class="second-container" [ngClass]="{ 'second-container-reverse': day === 'current' }">
   <div class="controls">
     <button class="btn-timing" routerLink="/timing" routerLinkActive="active">Timing</button>
     <button class="btn" (click)="openCurrent()">Current session</button>
@@ -18,7 +18,12 @@
 
   @for (session of sessions$ | async; track session.sessionId; let index = $index) {
     @if (day !== 'current' || index === 0) {
-      <kman-session [centered]="day === 'current'" [session]="session" [lazy]="index >= 9" [deferLoadByMs]="index >= 9 ? 0 : index * 50" [polled]="index === 0 && shouldPoll"></kman-session>
+      <kman-session
+        [centered]="day === 'current'"
+        [session]="session"
+        [lazy]="index >= 9"
+        [deferLoadByMs]="index >= 9 ? 0 : index * 50"
+        [polled]="index === 0 && shouldPoll"></kman-session>
     }
   }
 </div>

@@ -1,31 +1,31 @@
 @import '../../styles.scss';
 
 .timing {
-    color: black;
-    font-size: clamp(1rem, 4vw, 50rem);
-    font-weight: bold;
+  color: black;
+  font-size: clamp(1rem, 4vw, 50rem);
+  font-weight: bold;
 }
 
 .timing-value {
-    padding: 0 5vw;
+  padding: 0 5vw;
 }
 
 .positive {
-    color: rgb(250, 27, 150);
+  color: rgb(250, 27, 150);
 }
 
 .bad {
-    color: red;
+  color: red;
 }
 
 .good {
-    color: green;
+  color: green;
 }
 
 .fastest {
-    color: $fastestLaptimeColor;
+  color: $fastestLaptimeColor;
 }
 
 .odd {
-    background-color: #bbb;
+  background-color: #bbb;
 }
