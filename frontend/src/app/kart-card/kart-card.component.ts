@@ -30,7 +30,7 @@ export class KartCardComponent {
         const allTimes = entry.laps.map(lap => lap.lapTime);
         const trueTimes = entry.laps.slice(2, -2).map(lap => lap.lapTime);
 
-        let fastestLapTime = Math.min(...allTimes);
+        const fastestLapTime = Math.min(...allTimes);
         let slowestLapTime = Math.max(...allTimes);
         let averageLapTime = allTimes.reduce((a, b) => a + b) / totalAllLaps;
 

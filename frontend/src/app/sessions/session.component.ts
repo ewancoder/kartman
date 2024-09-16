@@ -4,7 +4,7 @@ import {
     Component,
     Input,
     signal,
-    WritableSignal
+    WritableSignal, OnInit
 } from '@angular/core';
 import { SessionInfo } from './session.service';
 import { AsyncPipe, NgClass } from '@angular/common';
@@ -19,13 +19,13 @@ import { SessionInfoComponent } from '../session-info/session-info.component';
     styleUrl: './session.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SessionComponent {
+export class SessionComponent implements OnInit {
     @Input({ required: true }) session!: SessionInfo;
-    @Input() lazy: boolean = false;
-    @Input() deferLoadByMs: number = 0;
-    @Input() polled: boolean = false;
-    @Input() centered: boolean = false;
-    hidden: boolean = false;
+    @Input() lazy = false;
+    @Input() deferLoadByMs = 0;
+    @Input() polled = false;
+    @Input() centered = false;
+    hidden = false;
     shouldLoad: WritableSignal<boolean> = signal(false);
 
     constructor(private cdr: ChangeDetectorRef) {}

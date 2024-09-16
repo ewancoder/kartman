@@ -1,4 +1,4 @@
-import { Component, signal, WritableSignal } from '@angular/core';
+import { Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { KartDriveData, SessionInfo, SessionService } from '../sessions/session.service';
 import { map, Observable, retry, share, switchMap, timer } from 'rxjs';
 import { AsyncPipe, DecimalPipe, NgClass } from '@angular/common';
@@ -10,7 +10,7 @@ import { AsyncPipe, DecimalPipe, NgClass } from '@angular/common';
     templateUrl: './timing.component.html',
     styleUrl: './timing.component.scss'
 })
-export class TimingComponent {
+export class TimingComponent implements OnInit {
     constructor(private sessionService: SessionService) {}
     private currentSessionId: string | undefined;
     timing$Signal: WritableSignal<Observable<KartTiming[]> | undefined> = signal(undefined);

@@ -12,5 +12,5 @@ import { NgClass } from '@angular/common';
 })
 export class SessionInfoComponent {
     @Input({ required: true }) session!: SessionInfo;
-    @Input() centered: boolean = false;
+    @Input() centered = false;
 }

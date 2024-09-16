@@ -11,5 +11,5 @@ import { DecimalPipe } from '@angular/common';
 })
 export class DriveSummaryComponent {
     @Input({ required: true }) summary!: LapSummary;
-    @Input() compact: boolean = false;
+    @Input() compact = false;
 }

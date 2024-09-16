@@ -12,5 +12,5 @@ import { LapEntry } from '../sessions/session.service';
 })
 export class LapComponent {
     @Input({ required: true }) lap!: LapEntry;
-    @Input() fastest: boolean = false;
+    @Input() fastest = false;
 }

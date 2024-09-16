@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import {
     BehaviorSubject,
     catchError,
@@ -37,12 +37,12 @@ import flatpickr from 'flatpickr';
     styleUrl: './sessions.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SessionsComponent {
+export class SessionsComponent implements OnInit, AfterViewInit {
     @Input({ required: true }) day!: string;
     @ViewChild('datepicker') datepickerElement!: any; // TODO: Use proper type here.
     sessions$: Observable<SessionInfo[]> | undefined;
     loading$: Observable<boolean> | undefined;
-    shouldPoll: boolean = false;
+    shouldPoll = false;
     flatpickr: any;
 
     constructor(
@@ -129,7 +129,7 @@ export class Loader<TResponse> {
     // TODO: Handle errors.
     constructor(
         private source$: Observable<TResponse>,
-        delay: number = 500
+        delay = 500
     ) {
         let isLoading = true;
 

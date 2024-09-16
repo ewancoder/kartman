@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { KartDriveData, LapSummary, SessionService } from '../sessions/session.service';
 import {
     BehaviorSubject,
@@ -25,11 +25,11 @@ import { KartCardComponent } from '../kart-card/kart-card.component';
     styleUrl: './session-data.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SessionDataComponent {
+export class SessionDataComponent implements OnInit {
     data$: Observable<KartDriveData[]> | undefined;
-    @Input() centered: boolean = false;
+    @Input() centered = false;
     @Input({ required: true }) sessionId!: string;
-    private _polled: boolean = false;
+    private _polled = false;
     @Input() set polled(value: boolean) {
         this._polled = value;
         if (!value) {

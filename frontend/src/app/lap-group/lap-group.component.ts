@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LapEntry } from '../sessions/session.service';
 import { LapComponent } from '../lap/lap.component';
 import { NgClass } from '@angular/common';
@@ -10,7 +10,7 @@ import { NgClass } from '@angular/common';
     templateUrl: './lap-group.component.html',
     styleUrl: './lap-group.component.scss'
 })
-export class LapGroupComponent {
+export class LapGroupComponent implements OnInit {
     @Input({ required: true }) laps!: LapEntry[];
     fastestLapTime!: number;
 
