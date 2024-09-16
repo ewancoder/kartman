@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { DriveSummaryComponent } from '../drive-summary/drive-summary.component';
 import { KartInfo, KartInfoComponent } from '../kart-info/kart-info.component';
 import { LapGroupComponent } from '../lap-group/lap-group.component';
-import { DriveSummaryComponent } from '../drive-summary/drive-summary.component';
 import { KartDriveData, LapSummary } from '../sessions/session.service';
 
 @Component({

@@ -1,7 +1,7 @@
-import { Component, signal, WritableSignal, OnInit } from '@angular/core';
-import { KartDriveData, SessionInfo, SessionService } from '../sessions/session.service';
-import { map, Observable, retry, share, switchMap, timer } from 'rxjs';
 import { AsyncPipe, DecimalPipe, NgClass } from '@angular/common';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { map, Observable, retry, share, switchMap, timer } from 'rxjs';
+import { KartDriveData, SessionInfo, SessionService } from '../sessions/session.service';
 
 @Component({
     selector: 'kman-timing',

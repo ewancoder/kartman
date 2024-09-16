@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { LapEntry } from '../sessions/session.service';
-import { LapComponent } from '../lap/lap.component';
 import { NgClass } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
+import { LapComponent } from '../lap/lap.component';
+import { LapEntry } from '../sessions/session.service';
 
 @Component({
     selector: 'kman-lap-group',

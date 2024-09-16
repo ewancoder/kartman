@@ -1,6 +1,6 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { LapSummary } from '../sessions/session.service';
-import { DecimalPipe } from '@angular/common';
 
 @Component({
     selector: 'kman-drive-summary',

@@ -1,33 +1,19 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { AsyncPipe, NgClass } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import flatpickr from 'flatpickr';
 import {
     BehaviorSubject,
-    catchError,
-    combineLatest,
-    defer,
-    delay,
-    finalize,
-    iif,
-    map,
-    merge,
     Observable,
-    of,
-    race,
-    raceWith,
     retry,
     share,
-    startWith,
-    Subject,
     switchMap,
-    take,
     tap,
     timer
 } from 'rxjs';
-import { SessionInfo, SessionService } from './session.service';
-import { AsyncPipe, NgClass, NgTemplateOutlet } from '@angular/common';
-import { SessionComponent } from './session.component';
 import { LoaderComponent } from '../loader/loader.component';
-import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import flatpickr from 'flatpickr';
+import { SessionComponent } from './session.component';
+import { SessionInfo, SessionService } from './session.service';
 
 @Component({
     selector: 'kman-sessions',

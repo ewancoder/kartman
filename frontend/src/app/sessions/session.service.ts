@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, delay, share, tap, map, startWith } from 'rxjs';
+import { delay, map, Observable, of } from 'rxjs';
 
 export interface LapEntry {
     lapNumber: number;

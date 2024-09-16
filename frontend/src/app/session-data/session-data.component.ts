@@ -1,21 +1,18 @@
+import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { KartDriveData, LapSummary, SessionService } from '../sessions/session.service';
 import {
-    BehaviorSubject,
     Observable,
     retry,
     share,
     Subject,
     switchMap,
     takeUntil,
-    tap,
     timer
 } from 'rxjs';
-import { AsyncPipe, NgClass } from '@angular/common';
-import { LoaderComponent } from '../loader/loader.component';
-import { KartInfo } from '../kart-info/kart-info.component';
-import { Loader } from '../sessions/sessions.component';
 import { KartCardComponent } from '../kart-card/kart-card.component';
+import { LoaderComponent } from '../loader/loader.component';
+import { KartDriveData, SessionService } from '../sessions/session.service';
+import { Loader } from '../sessions/sessions.component';
 
 @Component({
     selector: 'kman-session-data',

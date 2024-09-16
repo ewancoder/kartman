@@ -1,7 +1,7 @@
+import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { SessionInfo } from '../sessions/session.service';
 import { WeatherInfoComponent } from '../weather-info/weather-info.component';
-import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'kman-session-info',
