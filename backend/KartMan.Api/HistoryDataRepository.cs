@@ -27,6 +27,7 @@ public sealed class HistoryDataRepository
         _weatherStore = weatherStore;
         var connectionString = configuration["DbConnectionString"];
         var builder = new NpgsqlDataSourceBuilder(connectionString);
+        builder.ConnectionStringBuilder.IncludeErrorDetail = true;
         _db = builder.Build();
     }
 
