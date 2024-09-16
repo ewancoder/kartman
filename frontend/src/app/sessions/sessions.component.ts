@@ -1,16 +1,16 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    Input,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import flatpickr from 'flatpickr';
-import {
-    BehaviorSubject,
-    Observable,
-    retry,
-    share,
-    switchMap,
-    tap,
-    timer
-} from 'rxjs';
+import { BehaviorSubject, Observable, retry, share, switchMap, tap, timer } from 'rxjs';
 import { LoaderComponent } from '../loader/loader.component';
 import { SessionComponent } from './session.component';
 import { SessionInfo, SessionService } from './session.service';

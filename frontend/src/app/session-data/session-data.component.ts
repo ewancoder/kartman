@@ -1,14 +1,6 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import {
-    Observable,
-    retry,
-    share,
-    Subject,
-    switchMap,
-    takeUntil,
-    timer
-} from 'rxjs';
+import { Observable, retry, share, Subject, switchMap, takeUntil, timer } from 'rxjs';
 import { KartCardComponent } from '../kart-card/kart-card.component';
 import { LoaderComponent } from '../loader/loader.component';
 import { KartDriveData, SessionService } from '../sessions/session.service';
