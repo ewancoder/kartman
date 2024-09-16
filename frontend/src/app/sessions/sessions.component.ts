@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import flatpickr from 'flatpickr';
 import {
@@ -25,11 +25,13 @@ import { SessionInfo, SessionService } from './session.service';
 })
 export class SessionsComponent implements OnInit, AfterViewInit {
     @Input({ required: true }) day!: string;
-    @ViewChild('datepicker') datepickerElement!: any; // TODO: Use proper type here.
+    @ViewChild('datepicker') datepickerElement!: ElementRef<HTMLInputElement>; // TODO: Use proper type here.
     sessions$: Observable<SessionInfo[]> | undefined;
     loading$: Observable<boolean> | undefined;
     shouldPoll = false;
-    flatpickr: any;
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    flatpickr: any; // This is a javascript library without a type.
 
     constructor(
         private sessionService: SessionService,
