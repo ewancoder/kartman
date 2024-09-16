@@ -16,9 +16,6 @@
             "outputPath": "dist/kartman-web",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            /*"polyfills": [
-              "zone.js"
-            ],*/
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -27,10 +24,7 @@
               },
               "./src/favicon.ico"
             ],
-            "styles": [
-              "node_modules/flatpickr/dist/themes/dark.css",
-              "src/styles.scss"
-            ],
+            "styles": ["node_modules/flatpickr/dist/themes/dark.css", "src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -75,10 +69,6 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            /*"polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],*/
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
@@ -86,17 +76,21 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "node_modules/flatpickr/dist/themes/dark.css",
-              "src/styles.scss"
-            ],
+            "styles": ["node_modules/flatpickr/dist/themes/dark.css", "src/styles.scss"],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": "2fc87beb-bd61-4e32-a709-909d08a8b773"
+    "analytics": "2fc87beb-bd61-4e32-a709-909d08a8b773",
+    "schematicCollections": ["@angular-eslint/schematics"]
   }
 }
