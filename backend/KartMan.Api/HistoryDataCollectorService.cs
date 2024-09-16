@@ -46,6 +46,7 @@ public sealed record RawHeadInfo(
 public sealed record ComparisonEntry(DateOnly day, int session, string kart, int lap);
 public sealed class HistoryDataCollectorService : IHostedService
 {
+    public const int MaxRecordedLapTimeSeconds = 10 * 60;
     private bool _isRunning = true;
     private Task? _gatheringData;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -187,7 +188,7 @@ public sealed class HistoryDataCollectorService : IHostedService
                     _logger.LogWarning(exception, "Error when trying to parse data for lap entry.");
                     return null;
                 }
-            }).Where(x => x != null).ToList();
+            }).Where(x => x != null && x.time < MaxRecordedLapTimeSeconds).ToList();
 
             _logger.LogInformation("Saving karting entries to the database.");
             foreach (var entry in entries)
