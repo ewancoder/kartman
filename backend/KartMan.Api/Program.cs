@@ -158,6 +158,11 @@ app.MapPut("/api/history-ng/{sessionId}/{lapId}/valid", async (long lapId) =>
     await repository.UpdateLapInvalidStatusAsync(lapId, false);
 });
 
+app.MapGet("/api/total-laps", async () =>
+{
+    return await repository.GetTotalLapsDrivenAsync();
+});
+
 app.UseCors("Cors");
 
 app.Services.GetRequiredService<WeatherGatherer>();

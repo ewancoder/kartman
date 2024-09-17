@@ -80,6 +80,28 @@ public sealed class HistoryDataRepository
         }
     }
 
+    public async ValueTask<long> GetTotalLapsDrivenAsync()
+    {
+        using var connection = await _db.OpenConnectionAsync();
+        using var command = connection.CreateCommand();
+
+        command.CommandText = """
+            SELECT d.id
+            FROM lap_data d
+            ORDER BY d.id DESC
+            LIMIT 1
+        """;
+
+        _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt64(0);
+        }
+
+        throw new InvalidOperationException("Could not get total laps driven.");
+    }
+
     // TODO: Try IAsyncEnumerable.
     public async ValueTask<IEnumerable<KartDriveNg>> GetHistoryForSessionAsync(string sessionId)
     {
