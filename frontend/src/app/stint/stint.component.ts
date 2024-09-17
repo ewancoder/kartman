@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { KartInfo, KartInfoComponent } from '../kart-info/kart-info.component';
-import { KartDriveData, LapSummary } from '../sessions/session.service';
+import { KartDriveData, LapSummary, SessionService } from '../sessions/session.service';
 import { StintLapsComponent } from '../stint-laps/stint-laps.component';
 import { StintSummaryComponent } from '../stint-summary/stint-summary.component';
 
@@ -13,6 +13,8 @@ import { StintSummaryComponent } from '../stint-summary/stint-summary.component'
 })
 export class StintComponent {
     @Input({ required: true }) data!: KartDriveData;
+
+    constructor(private sessionService: SessionService) {}
 
     getKartInfo(data: KartDriveData): KartInfo {
         return {
@@ -54,5 +56,18 @@ export class StintComponent {
             slowestLapTime: slowestLapTime,
             consistency: consistency
         };
+    }
+
+    invalidateLap() {
+        const lapNumber = prompt('Enter lap number');
+        const lap = this.data.laps.find(lap => lap.lapNumber === +(lapNumber ?? -1));
+
+        if (lap) {
+            if (lap.isInvalidLap) {
+                this.sessionService.validateLap(lap.lapId).subscribe();
+            } else {
+                this.sessionService.invalidateLap(lap.lapId).subscribe();
+            }
+        }
     }
 }

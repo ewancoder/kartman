@@ -4,3 +4,18 @@ $averageLaptimeColor: rgb(11, 105, 11);
 $slowestLaptimeColor: rgb(164, 6, 6);
 $mobileWidth: 700px;
 $statisticsSummaryColor: #eef;
+
+.btn {
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  background-color: #0cb;
+  box-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
+  cursor: pointer;
+}
+
+.slim-btn {
+  @extend .btn;
+  padding: 5px;
+  margin: 0px;
+}

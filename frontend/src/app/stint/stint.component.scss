@@ -15,4 +15,10 @@
 
 .laps-summary {
   min-width: 175px;
+  display: flex;
+  flex-direction: column;
+}
+
+.invalidate-btn {
+  background-color: rgb(223, 223, 223);
 }

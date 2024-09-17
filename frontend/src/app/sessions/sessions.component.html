@@ -10,7 +10,7 @@
 
 <div class="second-container" [ngClass]="{ 'second-container-reverse': day === 'current' }">
   <div class="controls">
-    <button class="btn-timing" routerLink="/timing" routerLinkActive="active">Timing</button>
+    <button class="btn btn-timing" routerLink="/timing" routerLinkActive="active">Timing</button>
     <button class="btn" (click)="openCurrent()">Current session</button>
     <input #datepicker placeholder="Select date..." />
     <button class="btn" (click)="openToday()">Today</button>
