@@ -49,13 +49,15 @@ export class TimingComponent implements OnInit {
         const minLapN = data.laps.find(lap => lap.lapTime === bestLapTime)?.lapNumber;
         const lastLapTime = data.laps.at(-1)?.lapTime;
         const delta = lastLapTime! - bestLapTime;
+        const totalLaps = data.laps.length;
 
         return {
             kartName: kartName,
             bestLapTime: bestLapTime,
             minLapN: minLapN!,
             lastLapTime: lastLapTime!,
-            delta: delta
+            delta: delta,
+            totalLaps: totalLaps
         };
     }
 }
@@ -66,4 +68,5 @@ export interface KartTiming {
     minLapN: number;
     lastLapTime: number;
     delta: number;
+    totalLaps: number;
 }
