@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LapGroupComponent } from './lap-group.component';
+import { StintLapsComponent } from './stint-laps.component';
 
-describe('LapGroupComponent', () => {
-    let component: LapGroupComponent;
-    let fixture: ComponentFixture<LapGroupComponent>;
+describe('StintLapsComponent', () => {
+    let component: StintLapsComponent;
+    let fixture: ComponentFixture<StintLapsComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [LapGroupComponent]
+            imports: [StintLapsComponent]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(LapGroupComponent);
+        fixture = TestBed.createComponent(StintLapsComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

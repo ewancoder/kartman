@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { StintSummaryComponent } from '../stint-summary/stint-summary.component';
 import { KartInfo, KartInfoComponent } from '../kart-info/kart-info.component';
-import { LapGroupComponent } from '../lap-group/lap-group.component';
+import { StintLapsComponent } from '../stint-laps/stint-laps.component';
 import { KartDriveData, LapSummary } from '../sessions/session.service';
 
 @Component({
     selector: 'kman-kart-card',
     standalone: true,
-    imports: [KartInfoComponent, LapGroupComponent, StintSummaryComponent],
+    imports: [KartInfoComponent, StintLapsComponent, StintSummaryComponent],
     templateUrl: './kart-card.component.html',
     styleUrl: './kart-card.component.scss'
 })

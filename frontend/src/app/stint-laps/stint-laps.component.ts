@@ -4,13 +4,13 @@ import { LapComponent } from '../lap/lap.component';
 import { LapEntry } from '../sessions/session.service';
 
 @Component({
-    selector: 'kman-lap-group',
+    selector: 'kman-stint-laps',
     standalone: true,
     imports: [LapComponent, NgClass],
-    templateUrl: './lap-group.component.html',
-    styleUrl: './lap-group.component.scss'
+    templateUrl: './stint-laps.component.html',
+    styleUrl: './stint-laps.component.scss'
 })
-export class LapGroupComponent implements OnInit {
+export class StintLapsComponent implements OnInit {
     @Input({ required: true }) laps!: LapEntry[];
     fastestLapTime!: number;
 
