@@ -1,24 +1,28 @@
-@import '../../styles.scss';
+@import '../../shared.scss';
 
 td {
   padding: 0 10px;
 }
 
 table {
-  background-color: #eef;
+  background-color: $statisticsSummaryColor;
 }
 
-.fastest-laptime {
+.emphasized {
+  font-weight: bold;
+}
+
+.fastest {
+  @extend .emphasized;
   color: $fastestLaptimeColor;
-  font-weight: bold;
 }
 
-.average-laptime {
+.average {
+  @extend .emphasized;
   color: $averageLaptimeColor;
-  font-weight: bold;
 }
 
-.slowest-laptime {
+.slowest {
+  @extend .emphasized;
   color: $slowestLaptimeColor;
-  font-weight: bold;
 }

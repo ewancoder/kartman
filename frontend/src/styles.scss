@@ -1,8 +1,4 @@
-$background-color: #fefefe;
-$fastestLaptimeColor: #80c;
-$averageLaptimeColor: rgb(11, 105, 11);
-$slowestLaptimeColor: rgb(164, 6, 6);
-$mobileWidth: 700px;
+@import './shared.scss';
 
 html,
 body {
