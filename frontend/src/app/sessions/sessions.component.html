@@ -25,5 +25,9 @@
         [deferLoadByMs]="index >= 9 ? 0 : index * 50"
         [polled]="index === 0 && shouldPoll"></kman-session>
     }
+  } @empty {
+    <div style="text-align: center">
+      <h2>No data found, please select a different day</h2>
+    </div>
   }
 </div>
