@@ -163,6 +163,11 @@ app.MapGet("/api/total-laps", async () =>
     return await repository.GetTotalLapsDrivenAsync();
 });
 
+app.MapGet("/api/first-date", async () =>
+{
+    return await repository.GetFirstRecordedTimeAsync();
+});
+
 app.UseCors("Cors");
 
 app.Services.GetRequiredService<WeatherGatherer>();

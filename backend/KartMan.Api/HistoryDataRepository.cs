@@ -80,6 +80,28 @@ public sealed class HistoryDataRepository
         }
     }
 
+    public async ValueTask<DateTime> GetFirstRecordedTimeAsync()
+    {
+        using var connection = await _db.OpenConnectionAsync();
+        using var command = connection.CreateCommand();
+
+        command.CommandText = """
+            SELECT d.recorded_at
+            FROM lap_data d
+            ORDER BY d.recorded_at
+            LIMIT 1
+        """;
+
+        _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return reader.GetDateTime(0);
+        }
+
+        throw new InvalidOperationException("Could not get total laps driven.");
+    }
+
     public async ValueTask<long> GetTotalLapsDrivenAsync()
     {
         using var connection = await _db.OpenConnectionAsync();
