@@ -1,12 +1,12 @@
 import { NgClass } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { LapComponent } from '../lap/lap.component';
+import { StintLapComponent } from '../stint-lap/stint-lap.component';
 import { LapEntry } from '../sessions/session.service';
 
 @Component({
     selector: 'kman-stint-laps',
     standalone: true,
-    imports: [LapComponent, NgClass],
+    imports: [StintLapComponent, NgClass],
     templateUrl: './stint-laps.component.html',
     styleUrl: './stint-laps.component.scss'
 })

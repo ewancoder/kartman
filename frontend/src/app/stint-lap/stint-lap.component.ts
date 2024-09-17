@@ -3,14 +3,14 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { LapEntry } from '../sessions/session.service';
 
 @Component({
-    selector: 'kman-lap',
+    selector: 'kman-stint-lap',
     standalone: true,
     imports: [NgClass],
-    templateUrl: './lap.component.html',
-    styleUrl: './lap.component.scss',
+    templateUrl: './stint-lap.component.html',
+    styleUrl: './stint-lap.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LapComponent {
+export class StintLapComponent {
     @Input({ required: true }) lap!: LapEntry;
     @Input() fastest = false;
 }
