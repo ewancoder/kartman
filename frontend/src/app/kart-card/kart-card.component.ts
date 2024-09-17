@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { DriveSummaryComponent } from '../drive-summary/drive-summary.component';
+import { StintSummaryComponent } from '../stint-summary/stint-summary.component';
 import { KartInfo, KartInfoComponent } from '../kart-info/kart-info.component';
 import { LapGroupComponent } from '../lap-group/lap-group.component';
 import { KartDriveData, LapSummary } from '../sessions/session.service';
@@ -7,7 +7,7 @@ import { KartDriveData, LapSummary } from '../sessions/session.service';
 @Component({
     selector: 'kman-kart-card',
     standalone: true,
-    imports: [KartInfoComponent, LapGroupComponent, DriveSummaryComponent],
+    imports: [KartInfoComponent, LapGroupComponent, StintSummaryComponent],
     templateUrl: './kart-card.component.html',
     styleUrl: './kart-card.component.scss'
 })

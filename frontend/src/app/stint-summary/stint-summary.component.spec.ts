@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DriveSummaryComponent } from './drive-summary.component';
+import { StintSummaryComponent } from './stint-summary.component';
 
-describe('DriveSummaryComponent', () => {
-    let component: DriveSummaryComponent;
-    let fixture: ComponentFixture<DriveSummaryComponent>;
+describe('StintSummaryComponent', () => {
+    let component: StintSummaryComponent;
+    let fixture: ComponentFixture<StintSummaryComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [DriveSummaryComponent]
+            imports: [StintSummaryComponent]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(DriveSummaryComponent);
+        fixture = TestBed.createComponent(StintSummaryComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

@@ -3,13 +3,13 @@ import { Component, Input } from '@angular/core';
 import { LapSummary } from '../sessions/session.service';
 
 @Component({
-    selector: 'kman-drive-summary',
+    selector: 'kman-stint-summary',
     standalone: true,
     imports: [DecimalPipe],
-    templateUrl: './drive-summary.component.html',
-    styleUrl: './drive-summary.component.scss'
+    templateUrl: './stint-summary.component.html',
+    styleUrl: './stint-summary.component.scss'
 })
-export class DriveSummaryComponent {
+export class StintSummaryComponent {
     @Input({ required: true }) summary!: LapSummary;
     @Input() compact = false;
 }
