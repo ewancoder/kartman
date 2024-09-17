@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { StintSummaryComponent } from '../stint-summary/stint-summary.component';
 import { KartInfo, KartInfoComponent } from '../kart-info/kart-info.component';
-import { StintLapsComponent } from '../stint-laps/stint-laps.component';
 import { KartDriveData, LapSummary } from '../sessions/session.service';
+import { StintLapsComponent } from '../stint-laps/stint-laps.component';
+import { StintSummaryComponent } from '../stint-summary/stint-summary.component';
 
 @Component({
     selector: 'kman-stint',
@@ -23,20 +23,20 @@ export class StintComponent {
 
     // TODO: Consider moving this method inside drive-summary component.
     getSummary(entry: KartDriveData): LapSummary {
-        // TODO: Consider getting this from backend to avoid calculations on frontend.
-        const totalAllLaps = entry.laps.length;
-        const totalTrueLaps = entry.laps.length - 4;
+        const validLaps = entry.laps.filter(lap => !lap.isInvalidLap);
 
-        const allTimes = entry.laps.map(lap => lap.lapTime);
-        const trueTimes = entry.laps.slice(2, -2).map(lap => lap.lapTime);
+        // TODO: Consider getting this from backend to avoid calculations on frontend.
+        const totalAllLaps = validLaps.length;
+        const totalTrueLaps = validLaps.length - 4;
+
+        const allTimes = validLaps.map(lap => lap.lapTime);
+        const trueTimes = validLaps.slice(2, -2).map(lap => lap.lapTime);
 
         const fastestLapTime = Math.min(...allTimes);
         let slowestLapTime = Math.max(...allTimes);
         let averageLapTime = allTimes.reduce((a, b) => a + b) / totalAllLaps;
 
-        const fastestLap: number = entry.laps.find(
-            lap => lap.lapTime === fastestLapTime
-        )!.lapNumber;
+        const fastestLap: number = validLaps.find(lap => lap.lapTime === fastestLapTime)!.lapNumber;
 
         if (totalTrueLaps > 0) {
             //fastestLapTime = Math.min(...trueTimes);

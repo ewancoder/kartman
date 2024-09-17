@@ -5,6 +5,8 @@ import { delay, map, Observable, of } from 'rxjs';
 export interface LapEntry {
     lapNumber: number;
     lapTime: number;
+    isInvalidLap: boolean;
+    lapId: number;
 }
 
 export interface KartDriveData {
@@ -40,16 +42,14 @@ export class SessionService {
     constructor(private http: HttpClient) {}
 
     getSessions(day: string): Observable<SessionInfo[]> {
-        return this.http
-            .get<SessionInfo[]>(`https://api.kartman.typingrealm.com/api/sessions-ng/${day}`)
-            .pipe(
-                map(infos =>
-                    infos.map(info => ({
-                        ...info,
-                        startedAt: new Date(`${info.startedAt}Z`)
-                    }))
-                )
-            );
+        return this.http.get<SessionInfo[]>(`https://api.kartman.typingrealm.com/api/sessions-ng/${day}`).pipe(
+            map(infos =>
+                infos.map(info => ({
+                    ...info,
+                    startedAt: new Date(`${info.startedAt}Z`)
+                }))
+            )
+        );
 
         return of([
             {
@@ -74,9 +74,7 @@ export class SessionService {
     }
 
     getKartDriveData(sessionId: string): Observable<KartDriveData[]> {
-        return this.http.get<KartDriveData[]>(
-            `https://api.kartman.typingrealm.com/api/history-ng/${sessionId}`
-        );
+        return this.http.get<KartDriveData[]>(`https://api.kartman.typingrealm.com/api/history-ng/${sessionId}`);
 
         return of([
             {
@@ -90,11 +88,15 @@ export class SessionService {
                 laps: [
                     {
                         lapNumber: 1,
-                        lapTime: 24.831
+                        lapTime: 24.831,
+                        isInvalidLap: false,
+                        lapId: 1
                     },
                     {
                         lapNumber: 2,
-                        lapTime: 25.311
+                        lapTime: 25.311,
+                        isInvalidLap: false,
+                        lapId: 2
                     }
                 ]
             },
@@ -109,14 +111,26 @@ export class SessionService {
                 laps: [
                     {
                         lapNumber: 1,
-                        lapTime: 8824.831
+                        lapTime: 8824.831,
+                        isInvalidLap: false,
+                        lapId: 3
                     },
                     {
                         lapNumber: 2,
-                        lapTime: 8825.311
+                        lapTime: 8825.311,
+                        isInvalidLap: false,
+                        lapId: 4
                     }
                 ]
             }
         ]).pipe(delay(5000));
+    }
+
+    invalidateLap(lapId: number) {
+        return this.http.put(`https://api.kartman.typingrealm.com/api/history-ng/laps/${lapId}/invalid`, null);
+    }
+
+    validateLap(lapId: number) {
+        return this.http.put(`https://api.kartman.typingrealm.com/api/history-ng/laps/${lapId}/valid`, null);
     }
 }
