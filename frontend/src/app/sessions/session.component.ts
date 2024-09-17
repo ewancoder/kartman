@@ -8,14 +8,14 @@ import {
     signal,
     WritableSignal
 } from '@angular/core';
-import { SessionDataComponent } from '../session-data/session-data.component';
+import { SessionStintsComponent } from '../session-stints/session-stints.component';
 import { SessionInfoComponent } from '../session-info/session-info.component';
 import { SessionInfo } from './session.service';
 
 @Component({
     selector: 'kman-session',
     standalone: true,
-    imports: [AsyncPipe, SessionDataComponent, SessionInfoComponent, NgClass],
+    imports: [AsyncPipe, SessionStintsComponent, SessionInfoComponent, NgClass],
     templateUrl: './session.component.html',
     styleUrl: './session.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush

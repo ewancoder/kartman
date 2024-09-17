@@ -7,14 +7,14 @@ import { KartDriveData, SessionService } from '../sessions/session.service';
 import { Loader } from '../sessions/sessions.component';
 
 @Component({
-    selector: 'kman-session-data',
+    selector: 'kman-session-stints',
     standalone: true,
     imports: [AsyncPipe, LoaderComponent, NgClass, StintComponent],
-    templateUrl: './session-data.component.html',
-    styleUrl: './session-data.component.scss',
+    templateUrl: './session-stints.component.html',
+    styleUrl: './session-stints.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SessionDataComponent implements OnInit {
+export class SessionStintsComponent implements OnInit {
     data$: Observable<KartDriveData[]> | undefined;
     @Input() centered = false;
     @Input({ required: true }) sessionId!: string;

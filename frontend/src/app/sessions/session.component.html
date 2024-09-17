@@ -4,9 +4,9 @@
 
 @if (shouldLoad()) {
   <div class="session-data fade-in" [ngClass]="{ 'kman-hidden': hidden }">
-    <kman-session-data
+    <kman-session-stints
       [sessionId]="session.sessionId"
       [polled]="polled"
-      [centered]="centered"></kman-session-data>
+      [centered]="centered"></kman-session-stints>
   </div>
 }
