@@ -26,8 +26,10 @@
         [polled]="index === 0 && shouldPoll"></kman-session>
     }
   } @empty {
-    <div style="text-align: center">
-      <h2>No data found, please select a different day</h2>
-    </div>
+    @if (dataLoadedSignal()) {
+      <div style="text-align: center">
+        <h2>No data found, please select a different day</h2>
+      </div>
+    }
   }
 </div>

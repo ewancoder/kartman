@@ -6,7 +6,9 @@ import {
     ElementRef,
     Input,
     OnInit,
-    ViewChild
+    signal,
+    ViewChild,
+    WritableSignal
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import flatpickr from 'flatpickr';
@@ -28,6 +30,7 @@ export class SessionsComponent implements OnInit, AfterViewInit {
     @ViewChild('datepicker') datepickerElement!: ElementRef<HTMLInputElement>; // TODO: Use proper type here.
     sessions$: Observable<SessionInfo[]> | undefined;
     loading$: Observable<boolean> | undefined;
+    dataLoadedSignal: WritableSignal<boolean> = signal(false);
     shouldPoll = false;
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -91,9 +94,9 @@ export class SessionsComponent implements OnInit, AfterViewInit {
                 now.getFullYear() === date.getFullYear();
         }
 
-        const sessions$ = this.sessionService.getSessions(
-            this.day === 'current' ? 'today' : this.day
-        );
+        const sessions$ = this.sessionService
+            .getSessions(this.day === 'current' ? 'today' : this.day)
+            .pipe(tap(() => this.dataLoadedSignal.set(true)));
 
         const loader = new Loader(sessions$);
 
