@@ -4,6 +4,6 @@
 
 <div class="karts-container" [ngClass]="{ centered: centered }">
   @for (data of data$ | async; track data.kartId) {
-    <kman-kart-card [data]="data" />
+    <kman-stint [data]="data" />
   }
 </div>

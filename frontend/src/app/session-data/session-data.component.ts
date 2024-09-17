@@ -1,7 +1,7 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Observable, retry, share, Subject, switchMap, takeUntil, timer } from 'rxjs';
-import { KartCardComponent } from '../kart-card/kart-card.component';
+import { StintComponent } from '../stint/stint.component';
 import { LoaderComponent } from '../loader/loader.component';
 import { KartDriveData, SessionService } from '../sessions/session.service';
 import { Loader } from '../sessions/sessions.component';
@@ -9,7 +9,7 @@ import { Loader } from '../sessions/sessions.component';
 @Component({
     selector: 'kman-session-data',
     standalone: true,
-    imports: [AsyncPipe, LoaderComponent, NgClass, KartCardComponent],
+    imports: [AsyncPipe, LoaderComponent, NgClass, StintComponent],
     templateUrl: './session-data.component.html',
     styleUrl: './session-data.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush

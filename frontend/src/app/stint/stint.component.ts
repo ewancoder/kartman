@@ -5,13 +5,13 @@ import { StintLapsComponent } from '../stint-laps/stint-laps.component';
 import { KartDriveData, LapSummary } from '../sessions/session.service';
 
 @Component({
-    selector: 'kman-kart-card',
+    selector: 'kman-stint',
     standalone: true,
     imports: [KartInfoComponent, StintLapsComponent, StintSummaryComponent],
-    templateUrl: './kart-card.component.html',
-    styleUrl: './kart-card.component.scss'
+    templateUrl: './stint.component.html',
+    styleUrl: './stint.component.scss'
 })
-export class KartCardComponent {
+export class StintComponent {
     @Input({ required: true }) data!: KartDriveData;
 
     getKartInfo(data: KartDriveData): KartInfo {
