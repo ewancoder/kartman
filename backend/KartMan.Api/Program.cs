@@ -138,8 +138,10 @@ app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
             KartName = g.First.Kart,
             Laps = g.Entries.Select(l => new
             {
+                LapId = l.LapId,
                 LapNumber = l.LapNumber,
-                LapTime = l.LapTime
+                LapTime = l.LapTime,
+                IsInvalidLap = l.InvalidLap
             }).OrderBy(x => x.LapNumber).ToList()
         })
         .OrderBy(x => x.KartName) // TODO: Order so 14 is after 2, not before.
