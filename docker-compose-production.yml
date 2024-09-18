@@ -21,6 +21,8 @@ services:
     build:
       context: backend/.
       dockerfile: KartMan.Api/Dockerfile-production
+    volumes:
+      - /data/kartman/cache:/app/cache
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 750m

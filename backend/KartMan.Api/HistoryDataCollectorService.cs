@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -69,8 +70,23 @@ public sealed class HistoryDataCollectorService : IHostedService
         _logger = logger;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
+        if (File.Exists("cache"))
+        {
+            var text = await File.ReadAllTextAsync("cache", cancellationToken);
+            var parts = text.Split("__");
+            if (parts.Length == 4)
+            {
+                _previousHash = parts[0];
+                _lastTelemetryRecordedAtUtc = new DateTime(Convert.ToInt64(parts[1]));
+                _dayEnded = Convert.ToBoolean(parts[2]);
+                _lastSession = parts[3];
+
+                _logger.LogInformation("Starting gathering process. Got data from cache: {PreviousHash}, {LastTelemetryRecordedAtUtc}, {DayEnded}, {LastSession}", _previousHash, _lastTelemetryRecordedAtUtc, _dayEnded, _lastSession);
+            }
+        }
+
         _gatheringData = Task.Run(async () =>
         {
             while (true)
@@ -95,10 +111,9 @@ public sealed class HistoryDataCollectorService : IHostedService
 
                 await Task.Delay(3000);
             }
-        });
+        }, cancellationToken);
 
         _logger.LogInformation("Started gathering history data.");
-        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -130,19 +145,26 @@ public sealed class HistoryDataCollectorService : IHostedService
                 ?? throw new InvalidOperationException("Could not deserialize result from karting api.");
             // TODO: Send signalr update here to update the web page, we got new data.
 
-            _previousHash = hash;
-            _lastTelemetryRecordedAtUtc = DateTime.UtcNow;
-
-            if (_dayEnded && _lastSession == rawJson.headinfo.number)
+            try
             {
-                _logger.LogDebug("Day has ended and it is the last session. Skipping.");
-                return; // TODO: If there were ZERO sessions for the whole day - this will cause first session of the next day to be lost. Try to fix this.
+                _previousHash = hash;
+                _lastTelemetryRecordedAtUtc = DateTime.UtcNow;
+
+                if (_dayEnded && _lastSession == rawJson.headinfo.number && _lastSession != "1")
+                {
+                    _logger.LogDebug("Day has ended and it is the last session. Skipping.");
+                    return; // TODO: If there was only one session for the whole day - we'll write invalid data after all.
+                }
+
+                _logger.LogInformation("Storing the data. {DayEndend}, {LastSession}, {CurrentSessionNumber}", _dayEnded, _lastSession, rawJson.headinfo.number);
+
+                if (_dayEnded) _dayEnded = false;
+                _lastSession = rawJson.headinfo.number;
             }
-
-            _logger.LogInformation("Storing the data. {DayEndend}, {LastSession}, {CurrentSessionNumber}", _dayEnded, _lastSession, rawJson.headinfo.number);
-
-            if (_dayEnded) _dayEnded = false;
-            _lastSession = rawJson.headinfo.number;
+            finally
+            {
+                await File.WriteAllTextAsync("cache", $"{_previousHash}__{_lastTelemetryRecordedAtUtc.Ticks}__{_dayEnded}__{_lastSession}");
+            }
 
             static decimal ParseTime(string time)
             {
