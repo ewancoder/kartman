@@ -1,6 +1,10 @@
 <div class="statistics-container">
   <p class="statistics-line">Batumi Karting</p>
   @if (totalLaps$ | async; as totalLaps) {
-    <p class="statistics-line">{{ totalLaps | number: '2.0' }} laps driven</p>
+    <div style="display: flex; flex-direction: row; justify-content: center; column-gap: 10px">
+      <p class="statistics-line statistics-addition" style="visibility: hidden">(from June 2024)</p>
+      <p class="statistics-line">{{ totalLaps | number: '2.0' }} laps driven</p>
+      <p class="statistics-line statistics-addition">(from June 2024)</p>
+    </div>
   }
 </div>
