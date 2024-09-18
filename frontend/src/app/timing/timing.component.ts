@@ -60,6 +60,13 @@ export class TimingComponent implements OnInit {
             totalLaps: totalLaps
         };
     }
+
+    generateKartColor(kartNumber: number, totalKarts = 88) {
+        const hue = ((kartNumber * 137) % totalKarts) * (360 / totalKarts);
+        const saturation = 90;
+        const lightness = 50;
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    }
 }
 
 export interface KartTiming {
