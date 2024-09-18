@@ -287,9 +287,9 @@ public sealed class HistoryDataRepository
             using var command = connection.CreateCommand();
             command.CommandText =
             @"
-INSERT INTO lap_data (session_id, recorded_at, kart, lap, laptime, position, gap, weather_id)
-VALUES (@session_id, @recorded_at, @kart, @lap, @laptime, @position, @gap, @weather_id)
-ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@position, gap=@gap, recorded_at=@recorded_at;";
+INSERT INTO lap_data (session_id, recorded_at, kart, lap, laptime, position, gap, weather_id, invalid_lap)
+VALUES (@session_id, @recorded_at, @kart, @lap, @laptime, @position, @gap, @weather_id, @invalid_lap)
+ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@position, gap=@gap, recorded_at=@recorded_at, invalid_lap=@invalid_lap;";
             command.Parameters.AddWithValue("session_id", entry.GetSessionIdentifier());
             command.Parameters.AddWithValue("recorded_at", entry.recordedAtUtc);
             command.Parameters.AddWithValue("kart", entry.kart);
@@ -298,6 +298,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             command.Parameters.AddWithValue("position", entry.position);
             command.Parameters.AddWithValue("gap", entry.gap != null ? entry.gap : DBNull.Value);
             command.Parameters.AddWithValue("weather_id", DBNull.Value);
+            command.Parameters.AddWithValue("invalid_lap", entry.time <= 20 || entry.time >= 40);
 
             _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
             await command.ExecuteNonQueryAsync();
