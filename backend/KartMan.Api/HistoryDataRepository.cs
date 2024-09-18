@@ -298,7 +298,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             command.Parameters.AddWithValue("position", entry.position);
             command.Parameters.AddWithValue("gap", entry.gap != null ? entry.gap : DBNull.Value);
             command.Parameters.AddWithValue("weather_id", DBNull.Value);
-            command.Parameters.AddWithValue("invalid_lap", entry.time <= 20 || entry.time >= 40);
+            command.Parameters.AddWithValue("invalid_lap", entry.time <= 20 || entry.time >= 90);
 
             _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
             await command.ExecuteNonQueryAsync();
