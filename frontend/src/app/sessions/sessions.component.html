@@ -4,9 +4,7 @@
   </div>
 }
 
-@if (loading$ | async) {
-  <kman-loader />
-}
+<kman-overall-statistics></kman-overall-statistics>
 
 <div class="second-container" [ngClass]="{ 'second-container-reverse': day === 'current' }">
   <div class="controls">
@@ -15,6 +13,10 @@
     <input #datepicker placeholder="Select date..." />
     <button class="btn" (click)="openToday()">Today</button>
   </div>
+
+  @if (loading$ | async) {
+    <kman-loader />
+  }
 
   @for (session of sessions$ | async; track session.sessionId; let index = $index) {
     @if (day !== 'current' || index === 0) {

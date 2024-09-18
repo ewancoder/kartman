@@ -133,4 +133,12 @@ export class SessionService {
     validateLap(lapId: number) {
         return this.http.put(`https://api.kartman.typingrealm.com/api/history-ng/laps/${lapId}/valid`, null);
     }
+
+    getTotalLaps() {
+        return this.http.get<number>(`https://api.kartman.typingrealm.com/api/total-laps`);
+    }
+
+    getFirstDate() {
+        return this.http.get<Date>(`https://api.kartman.typingrealm.com/api/first-date`);
+    }
 }

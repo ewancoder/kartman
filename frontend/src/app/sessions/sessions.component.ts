@@ -14,13 +14,14 @@ import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/r
 import flatpickr from 'flatpickr';
 import { BehaviorSubject, Observable, retry, share, switchMap, tap, timer } from 'rxjs';
 import { LoaderComponent } from '../loader/loader.component';
+import { OverallStatisticsComponent } from '../overall-statistics/overall-statistics.component';
 import { SessionComponent } from './session.component';
 import { SessionInfo, SessionService } from './session.service';
 
 @Component({
     selector: 'kman-sessions',
     standalone: true,
-    imports: [AsyncPipe, SessionComponent, LoaderComponent, NgClass, RouterLink, RouterLinkActive],
+    imports: [AsyncPipe, SessionComponent, LoaderComponent, NgClass, RouterLink, RouterLinkActive, OverallStatisticsComponent],
     templateUrl: './sessions.component.html',
     styleUrl: './sessions.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
