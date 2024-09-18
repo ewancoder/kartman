@@ -82,6 +82,7 @@ export class SessionsComponent implements OnInit, AfterViewInit {
     }
 
     private loadData() {
+        this.dataLoadedSignal.set(false);
         if (this.day === 'today' || this.day === 'current') {
             this.shouldPoll = true;
         } else {
