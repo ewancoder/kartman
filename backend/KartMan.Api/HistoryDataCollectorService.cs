@@ -90,6 +90,7 @@ public sealed class HistoryDataCollectorService : IHostedService
                 if (!_isRunning)
                     return;
 
+                // The time is between 8am and 10pm.
                 await GatherDataAsync();
 
                 await Task.Delay(3000);
@@ -125,23 +126,9 @@ public sealed class HistoryDataCollectorService : IHostedService
                 return;
             }
 
-            var freshStart = _previousHash is null && _lastTelemetryRecordedAtUtc == default;
-
             var rawJson = JsonSerializer.Deserialize<RawJson>(content)
                 ?? throw new InvalidOperationException("Could not deserialize result from karting api.");
             // TODO: Send signalr update here to update the web page, we got new data.
-
-            // A HACK to avoid recording last day data again, if we restarted the app.
-            // Will only work if there were at least 10 sessions in the last day.
-            try
-            {
-                if (Convert.ToInt32(rawJson.headinfo.number) >= 10 && freshStart)
-                    return;
-            }
-            catch (Exception exception)
-            {
-                _logger.LogWarning(exception, "Failed to check headinfo number on the fresh start.");
-            }
 
             _previousHash = hash;
             _lastTelemetryRecordedAtUtc = DateTime.UtcNow;
@@ -152,8 +139,9 @@ public sealed class HistoryDataCollectorService : IHostedService
                 return; // TODO: If there were ZERO sessions for the whole day - this will cause first session of the next day to be lost. Try to fix this.
             }
 
-            if (_dayEnded) _dayEnded = false;
+            _logger.LogInformation("Storing the data. {DayEndend}, {LastSession}, {CurrentSessionNumber}", _dayEnded, _lastSession, rawJson.headinfo.number);
 
+            if (_dayEnded) _dayEnded = false;
             _lastSession = rawJson.headinfo.number;
 
             static decimal ParseTime(string time)
