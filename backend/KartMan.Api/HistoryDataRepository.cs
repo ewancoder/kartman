@@ -43,7 +43,7 @@ public sealed class HistoryDataRepository
             using var command = connection.CreateCommand();
 
             command.CommandText = """
-                SELECT s.id, s.recorded_at, s.session, coalesce(w.air_temp, wh.air_temp)
+                SELECT s.id, coalesce(s.updated_at, s.recorded_at), s.session, coalesce(w.air_temp, wh.air_temp)
                 FROM session s
                 JOIN weather w ON s.weather_id = w.id
                 JOIN weather_history wh ON w.weather_history_id = wh.id
@@ -384,9 +384,9 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
 
                 command.CommandText = @"
     WITH new_or_existing AS (
-        INSERT INTO session (id, recorded_at, day, session, total_length, weather_id, track_config)
-        VALUES (@id, @recorded_at, @day, @session, @total_length, @weather_id, @track_config)
-        ON CONFLICT (id) DO UPDATE SET id = @id
+        INSERT INTO session (id, recorded_at, day, session, total_length, weather_id, track_config, updated_at)
+        VALUES (@id, @recorded_at, @day, @session, @total_length, @weather_id, @track_config, @recorded_at)
+        ON CONFLICT (id) DO UPDATE SET updated_at = NOW()
         RETURNING id
     ) SELECT * FROM new_or_existing;";
 
