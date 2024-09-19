@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
@@ -13,13 +12,11 @@ public sealed class WeatherStore : IWeatherStore
     private readonly ILogger<WeatherStore> _logger;
 
     public WeatherStore(
-        IConfiguration configuration,
-        ILogger<WeatherStore> logger)
+        ILogger<WeatherStore> logger,
+        NpgsqlDataSource db)
     {
         _logger = logger;
-        var connectionString = configuration["DbConnectionString"];
-        var builder = new NpgsqlDataSourceBuilder(connectionString);
-        _db = builder.Build();
+        _db = db;
     }
 
     /// <summary>
