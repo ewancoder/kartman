@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import flatpickr from 'flatpickr';
-import { BehaviorSubject, Observable, retry, share, switchMap, tap, timer } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Observable, retry, share, switchMap, tap, timer } from 'rxjs';
 import { LoaderComponent } from '../loader/loader.component';
 import { OverallStatisticsComponent } from '../overall-statistics/overall-statistics.component';
 import { SessionInfo, SessionService } from '../session.service';
@@ -108,6 +108,7 @@ export class SessionsViewComponent implements OnInit, AfterViewInit {
         const polledData$ = timer(0, 20000).pipe(
             switchMap(() => loader.data$),
             retry(3),
+            distinctUntilChanged((prev, curr) => prev.length === curr.length),
             share()
         );
 

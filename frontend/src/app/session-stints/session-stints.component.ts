@@ -1,6 +1,6 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { Observable, retry, share, Subject, switchMap, takeUntil, timer } from 'rxjs';
+import { distinctUntilChanged, Observable, retry, share, Subject, switchMap, takeUntil, timer } from 'rxjs';
 import { LoaderComponent } from '../loader/loader.component';
 import { KartDriveData, SessionService } from '../session.service';
 import { Loader } from '../sessions-view/sessions-view.component';
@@ -38,6 +38,10 @@ export class SessionStintsComponent implements OnInit {
             takeUntil(this.stopPolling$),
             switchMap(() => loader.data$),
             retry(3),
+            distinctUntilChanged(
+                (curr, prev) =>
+                    curr.length === prev.length && curr.every((item, index) => item.laps.length === prev[index].laps.length)
+            ),
             share()
         );
 
