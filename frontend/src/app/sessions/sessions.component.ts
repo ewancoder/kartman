@@ -28,7 +28,7 @@ import { SessionInfo, SessionService } from './session.service';
 })
 export class SessionsComponent implements OnInit, AfterViewInit {
     @Input({ required: true }) day!: string;
-    @ViewChild('datepicker') datepickerElement!: ElementRef<HTMLInputElement>; // TODO: Use proper type here.
+    @ViewChild('datepicker') datepickerElement!: ElementRef<HTMLInputElement>;
     sessions$: Observable<SessionInfo[]> | undefined;
     loading$: Observable<boolean> | undefined;
     dataLoadedSignal: WritableSignal<boolean> = signal(false);
