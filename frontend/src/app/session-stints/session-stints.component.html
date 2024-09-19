@@ -6,4 +6,5 @@
   @for (data of data$ | async; track data.kartId) {
     <kman-stint [data]="data" [hideControls]="currentPage" />
   }
+  <!-- TODO: Show "Could not get the data" here AFTER all retries tried to get the data and failed. -->
 </div>

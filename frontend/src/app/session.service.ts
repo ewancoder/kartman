@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { delay, map, Observable, of } from 'rxjs';
+import { catchError, delay, map, Observable, of, retry } from 'rxjs';
 
 export interface LapEntry {
     lapNumber: number;
@@ -44,11 +44,19 @@ export class SessionService {
     getSessions(day: string): Observable<SessionInfo[]> {
         return this.http.get<SessionInfo[]>(`https://api.kartman.typingrealm.com/api/sessions/${day}`).pipe(
             map(infos =>
-                infos.map(info => ({
+                infos?.map(info => ({
                     ...info,
                     startedAt: new Date(`${info.startedAt}Z`)
                 }))
-            )
+            ),
+            retry({
+                count: 3,
+                delay: 1000
+            }),
+            catchError(() => {
+                console.error('Could not get the data.');
+                return of([]);
+            })
         );
 
         return of([
@@ -74,7 +82,16 @@ export class SessionService {
     }
 
     getKartDriveData(sessionId: string): Observable<KartDriveData[]> {
-        return this.http.get<KartDriveData[]>(`https://api.kartman.typingrealm.com/api/history/${sessionId}`);
+        return this.http.get<KartDriveData[]>(`https://api.kartman.typingrealm.com/api/history/${sessionId}`).pipe(
+            retry({
+                count: 3,
+                delay: 1000
+            }),
+            catchError(() => {
+                console.error('Could not get the data.');
+                return of([]);
+            })
+        );
 
         return of([
             {
