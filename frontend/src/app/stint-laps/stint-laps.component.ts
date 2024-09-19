@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { LapEntry } from '../sessions/session.service';
+import { LapEntry } from '../session.service';
 import { StintLapComponent } from '../stint-lap/stint-lap.component';
 
 @Component({

@@ -15,18 +15,18 @@ import flatpickr from 'flatpickr';
 import { BehaviorSubject, Observable, retry, share, switchMap, tap, timer } from 'rxjs';
 import { LoaderComponent } from '../loader/loader.component';
 import { OverallStatisticsComponent } from '../overall-statistics/overall-statistics.component';
-import { SessionComponent } from './session.component';
-import { SessionInfo, SessionService } from './session.service';
+import { SessionInfo, SessionService } from '../session.service';
+import { SessionComponent } from '../session/session.component';
 
 @Component({
-    selector: 'kman-sessions',
+    selector: 'kman-sessions-view',
     standalone: true,
     imports: [AsyncPipe, SessionComponent, LoaderComponent, NgClass, RouterLink, RouterLinkActive, OverallStatisticsComponent],
-    templateUrl: './sessions.component.html',
-    styleUrl: './sessions.component.scss',
+    templateUrl: './sessions-view.component.html',
+    styleUrl: './sessions-view.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SessionsComponent implements OnInit, AfterViewInit {
+export class SessionsViewComponent implements OnInit, AfterViewInit {
     @Input({ required: true }) day!: string;
     @ViewChild('datepicker') datepickerElement!: ElementRef<HTMLInputElement>;
     sessions$: Observable<SessionInfo[]> | undefined;

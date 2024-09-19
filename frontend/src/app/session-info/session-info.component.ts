@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { SessionInfo } from '../sessions/session.service';
+import { SessionInfo } from '../session.service';
 import { WeatherInfoComponent } from '../weather-info/weather-info.component';
 
 @Component({

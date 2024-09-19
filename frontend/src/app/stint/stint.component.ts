@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { KartInfoComponent } from '../kart-info/kart-info.component';
 import { KartInfo } from '../kart-info/kart-info.model';
-import { KartDriveData, LapSummary, SessionService } from '../sessions/session.service';
+import { KartDriveData, LapSummary, SessionService } from '../session.service';
 import { StintLapsComponent } from '../stint-laps/stint-laps.component';
 import { StintSummaryComponent } from '../stint-summary/stint-summary.component';
 

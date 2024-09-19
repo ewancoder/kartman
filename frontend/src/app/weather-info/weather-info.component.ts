@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { WeatherInfo } from '../sessions/session.service';
+import { WeatherInfo } from '../session.service';
 
 @Component({
     selector: 'kman-weather-info',

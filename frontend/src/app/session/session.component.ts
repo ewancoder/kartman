@@ -1,16 +1,8 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    Input,
-    OnInit,
-    signal,
-    WritableSignal
-} from '@angular/core';
-import { SessionStintsComponent } from '../session-stints/session-stints.component';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, signal, WritableSignal } from '@angular/core';
 import { SessionInfoComponent } from '../session-info/session-info.component';
-import { SessionInfo } from './session.service';
+import { SessionStintsComponent } from '../session-stints/session-stints.component';
+import { SessionInfo } from '../session.service';
 
 @Component({
     selector: 'kman-session',

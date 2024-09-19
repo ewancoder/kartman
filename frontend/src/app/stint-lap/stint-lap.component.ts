@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { LapEntry } from '../sessions/session.service';
+import { LapEntry } from '../session.service';
 
 @Component({
     selector: 'kman-stint-lap',

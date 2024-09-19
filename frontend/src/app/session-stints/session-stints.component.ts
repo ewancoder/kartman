@@ -1,10 +1,10 @@
 import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Observable, retry, share, Subject, switchMap, takeUntil, timer } from 'rxjs';
-import { StintComponent } from '../stint/stint.component';
 import { LoaderComponent } from '../loader/loader.component';
-import { KartDriveData, SessionService } from '../sessions/session.service';
-import { Loader } from '../sessions/sessions.component';
+import { KartDriveData, SessionService } from '../session.service';
+import { Loader } from '../sessions-view/sessions-view.component';
+import { StintComponent } from '../stint/stint.component';
 
 @Component({
     selector: 'kman-session-stints',
