@@ -3,31 +3,26 @@ version: "3.8"
 networks:
   default:
     name: typingrealm
+    external: true
 
 services:
-  kartman-ui:
-    image: ${DOCKER_REGISTRY-}kartman-ui
-    container_name: kartman-ui
-    build:
-      context: frontend/.
-      dockerfile: Dockerfile
+  kartman-web:
+    image: ghcr.io/ewancoder/kartman-web:main
+    container_name: kartman-web
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 750m
 
   kartman-api:
-    image: ${DOCKER_REGISTRY-}kartman-api
+    image: ghcr.io/ewancoder/kartman-api:main
     container_name: kartman-api
-    build:
-      context: backend/.
-      dockerfile: KartMan.Api/Dockerfile-production
     volumes:
       - /data/kartman/cache:/app/cache
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 750m
     env_file:
-      - secrets.env
+      - /data/kartman/secrets.env
 
   kartman-postgres:
     image: postgres
@@ -35,9 +30,9 @@ services:
     ports:
       - 10232:5432 # Port shouldn't be exposed in production.
     volumes:
-      - ./infrastructure-data/prod/kartman/postgres:/var/lib/postgresql/data
+      - /data/kartman/postgres:/var/lib/postgresql/data
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 750m
     env_file:
-      - secrets.env
+      - /data/kartman/secrets.env
