@@ -1,6 +1,6 @@
 import { AsyncPipe, DecimalPipe, NgClass } from '@angular/common';
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
-import { map, Observable, retry, share, switchMap, timer } from 'rxjs';
+import { Component, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
+import { map, Observable, retry, share, Subscription, switchMap, timer } from 'rxjs';
 import { KartDriveData, SessionInfo, SessionService } from '../session.service';
 
 @Component({
@@ -10,24 +10,29 @@ import { KartDriveData, SessionInfo, SessionService } from '../session.service';
     templateUrl: './timing.component.html',
     styleUrl: './timing.component.scss'
 })
-export class TimingComponent implements OnInit {
+export class TimingComponent implements OnInit, OnDestroy {
     constructor(private sessionService: SessionService) {}
     private currentSessionId: string | undefined;
     timing$Signal: WritableSignal<Observable<KartTiming[]> | undefined> = signal(undefined);
+    private _subscription!: Subscription;
 
     ngOnInit(): void {
         const sessions$ = this.sessionService.getSessions('today');
-        const polledData$ = timer(0, 20000).pipe(
+        const polledData$ = timer(0, 2000).pipe(
             switchMap(() => sessions$),
             retry(3),
             share()
         );
 
-        polledData$.subscribe(sessions => {
+        this._subscription = polledData$.subscribe(sessions => {
             if (sessions[0].sessionId !== this.currentSessionId) {
                 this.updateCurrentSession(sessions[0]);
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this._subscription.unsubscribe();
     }
 
     private updateCurrentSession(session: SessionInfo) {
@@ -39,6 +44,8 @@ export class TimingComponent implements OnInit {
             retry(3),
             share()
         );
+
+        // TODO: Consider using distinctUntilChanged. But we need to check ALL values here. Probably doesn't worth it.
 
         this.timing$Signal?.set(polledData$.pipe(map(data => data.map(x => this.getKartData(x)))));
     }
