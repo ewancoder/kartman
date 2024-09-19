@@ -17,17 +17,28 @@ import { LoaderComponent } from '../loader/loader.component';
 import { OverallStatisticsComponent } from '../overall-statistics/overall-statistics.component';
 import { SessionInfo, SessionService } from '../session.service';
 import { SessionComponent } from '../session/session.component';
+import { TimingComponent } from '../timing/timing.component';
 
 @Component({
     selector: 'kman-sessions-view',
     standalone: true,
-    imports: [AsyncPipe, SessionComponent, LoaderComponent, NgClass, RouterLink, RouterLinkActive, OverallStatisticsComponent],
+    imports: [
+        AsyncPipe,
+        SessionComponent,
+        LoaderComponent,
+        NgClass,
+        RouterLink,
+        RouterLinkActive,
+        OverallStatisticsComponent,
+        TimingComponent
+    ],
     templateUrl: './sessions-view.component.html',
     styleUrl: './sessions-view.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SessionsViewComponent implements OnInit, AfterViewInit {
     @Input({ required: true }) day!: string;
+    @Input() useTiming: boolean | undefined;
     @ViewChild('datepicker') datepickerElement!: ElementRef<HTMLInputElement>;
     sessions$: Observable<SessionInfo[]> | undefined;
     loading$: Observable<boolean> | undefined;

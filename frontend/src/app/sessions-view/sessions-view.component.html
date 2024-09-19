@@ -1,7 +1,13 @@
 @if (day === 'current') {
-  <div class="kart-timer">
-    <iframe frameborder="no" src="https://kart-timer.com/drivers/?p=livescreen&track=110"></iframe>
-  </div>
+  @if (!useTiming) {
+    <div class="kart-timer">
+      <iframe frameborder="no" src="https://kart-timer.com/drivers/?p=livescreen&track=110"></iframe>
+    </div>
+  } @else {
+    <div style="margin: 10px 100px">
+      <kman-timing></kman-timing>
+    </div>
+  }
 }
 
 <kman-overall-statistics></kman-overall-statistics>
