@@ -90,6 +90,8 @@ export class SessionsViewComponent implements OnInit, AfterViewInit {
             const date = new Date(+year, +month - 1, +day);
             const now = new Date();
 
+            // TODO: Make sure whole polling page works as expected
+            // when page is hanging for couple days without refreshes.
             this.shouldPoll =
                 now.getDate() === date.getDate() &&
                 now.getMonth() === date.getMonth() &&
