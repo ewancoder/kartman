@@ -16,7 +16,7 @@ import { StintComponent } from '../stint/stint.component';
 })
 export class SessionStintsComponent implements OnInit {
     data$: Observable<KartDriveData[]> | undefined;
-    @Input() centered = false;
+    @Input() currentPage = false;
     @Input({ required: true }) sessionId!: string;
     private _polled = false;
     @Input() set polled(value: boolean) {

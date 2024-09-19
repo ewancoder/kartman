@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { KartInfoComponent } from '../kart-info/kart-info.component';
 import { KartInfo } from '../kart-info/kart-info.model';
@@ -8,12 +9,13 @@ import { StintSummaryComponent } from '../stint-summary/stint-summary.component'
 @Component({
     selector: 'kman-stint',
     standalone: true,
-    imports: [KartInfoComponent, StintLapsComponent, StintSummaryComponent],
+    imports: [KartInfoComponent, StintLapsComponent, StintSummaryComponent, NgClass],
     templateUrl: './stint.component.html',
     styleUrl: './stint.component.scss'
 })
 export class StintComponent {
     @Input({ required: true }) data!: KartDriveData;
+    @Input() hideControls = false;
 
     constructor(
         private sessionService: SessionService,

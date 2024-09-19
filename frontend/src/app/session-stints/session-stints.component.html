@@ -2,8 +2,8 @@
   <kman-loader />
 }
 
-<div class="karts-container" [ngClass]="{ centered: centered }">
+<div class="karts-container" [ngClass]="{ centered: currentPage }">
   @for (data of data$ | async; track data.kartId) {
-    <kman-stint [data]="data" />
+    <kman-stint [data]="data" [hideControls]="currentPage" />
   }
 </div>
