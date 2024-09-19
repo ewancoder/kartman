@@ -42,7 +42,7 @@ export class SessionService {
     constructor(private http: HttpClient) {}
 
     getSessions(day: string): Observable<SessionInfo[]> {
-        return this.http.get<SessionInfo[]>(`https://api.kartman.typingrealm.com/api/sessions-ng/${day}`).pipe(
+        return this.http.get<SessionInfo[]>(`https://api.kartman.typingrealm.com/api/sessions/${day}`).pipe(
             map(infos =>
                 infos.map(info => ({
                     ...info,
@@ -74,7 +74,7 @@ export class SessionService {
     }
 
     getKartDriveData(sessionId: string): Observable<KartDriveData[]> {
-        return this.http.get<KartDriveData[]>(`https://api.kartman.typingrealm.com/api/history-ng/${sessionId}`);
+        return this.http.get<KartDriveData[]>(`https://api.kartman.typingrealm.com/api/history/${sessionId}`);
 
         return of([
             {
@@ -127,11 +127,11 @@ export class SessionService {
     }
 
     invalidateLap(lapId: number) {
-        return this.http.put(`https://api.kartman.typingrealm.com/api/history-ng/laps/${lapId}/invalid`, null);
+        return this.http.put(`https://api.kartman.typingrealm.com/api/history/laps/${lapId}/invalid`, null);
     }
 
     validateLap(lapId: number) {
-        return this.http.put(`https://api.kartman.typingrealm.com/api/history-ng/laps/${lapId}/valid`, null);
+        return this.http.put(`https://api.kartman.typingrealm.com/api/history/laps/${lapId}/valid`, null);
     }
 
     getTotalLaps() {

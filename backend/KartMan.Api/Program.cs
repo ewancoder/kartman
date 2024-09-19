@@ -59,7 +59,7 @@ app.MapGet("/diag", () =>
 
 var repository = app.Services.GetRequiredService<HistoryDataRepository>();
 
-app.MapGet("/api/sessions-ng/{dateString}", async (string dateString) =>
+app.MapGet("/api/sessions/{dateString}", async (string dateString) =>
 {
     var date = dateString == "today"
         ? DateTime.UtcNow
@@ -71,7 +71,7 @@ app.MapGet("/api/sessions-ng/{dateString}", async (string dateString) =>
     return infos;
 });
 
-app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
+app.MapGet("/api/history/{sessionId}", async (string sessionId) =>
 {
     var history = await repository.GetHistoryForSessionAsync(sessionId);
 
@@ -98,12 +98,12 @@ app.MapGet("/api/history-ng/{sessionId}", async (string sessionId) =>
         .ToList();
 });
 
-app.MapPut("/api/history-ng/{sessionId}/{lapId}/invalid", async (long lapId) =>
+app.MapPut("/api/history/{sessionId}/{lapId}/invalid", async (long lapId) =>
 {
     await repository.UpdateLapInvalidStatusAsync(lapId, true);
 });
 
-app.MapPut("/api/history-ng/{sessionId}/{lapId}/valid", async (long lapId) =>
+app.MapPut("/api/history/{sessionId}/{lapId}/valid", async (long lapId) =>
 {
     await repository.UpdateLapInvalidStatusAsync(lapId, false);
 });
@@ -121,16 +121,16 @@ app.MapGet("/api/first-date", async () =>
 app.UseCors("Cors");
 await app.RunAsync();
 
-public record SessionInfoNg(
+public record SessionInfo(
     string SessionId,
     string Name,
     DateTime StartedAt,
-    WeatherInfoNg WeatherInfo);
+    WeatherInfo WeatherInfo);
 
-public record WeatherInfoNg(
+public record WeatherInfo(
     decimal? AirTempC);
 
-public record KartDriveNg(
+public record KartDrive(
     long LapId,
     string Kart,
     int LapNumber,

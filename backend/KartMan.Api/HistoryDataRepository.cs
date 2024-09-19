@@ -28,7 +28,7 @@ public sealed class HistoryDataRepository
     }
 
     // TODO: Try IAsyncEnumerable.
-    public async ValueTask<IEnumerable<SessionInfoNg>> GetSessionInfosForDay(DateOnly day)
+    public async ValueTask<IEnumerable<global::SessionInfo>> GetSessionInfosForDay(DateOnly day)
     {
         using var _ = _logger.AddScoped("Day", day).BeginScope();
         try
@@ -49,7 +49,7 @@ public sealed class HistoryDataRepository
             command.Parameters.AddWithValue("day", day.DayNumber);
 
             _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
-            var list = new List<SessionInfoNg>();
+            var list = new List<global::SessionInfo>();
             using (var reader = await command.ExecuteReaderAsync())
             {
                 while (await reader.ReadAsync())
@@ -121,7 +121,7 @@ public sealed class HistoryDataRepository
     }
 
     // TODO: Try IAsyncEnumerable.
-    public async ValueTask<IEnumerable<KartDriveNg>> GetHistoryForSessionAsync(string sessionId)
+    public async ValueTask<IEnumerable<KartDrive>> GetHistoryForSessionAsync(string sessionId)
     {
         using var _ = _logger.AddScoped("SessionId", sessionId).BeginScope();
         try
@@ -139,7 +139,7 @@ public sealed class HistoryDataRepository
             command.Parameters.AddWithValue("sessionId", sessionId);
 
             _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
-            var list = new List<KartDriveNg>();
+            var list = new List<KartDrive>();
             using (var reader = await command.ExecuteReaderAsync())
             {
                 while (await reader.ReadAsync())
