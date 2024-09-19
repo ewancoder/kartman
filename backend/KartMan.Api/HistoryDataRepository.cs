@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using KartMan.Api;
-using Microsoft.Extensions.Logging;
-using Npgsql;
+﻿using Npgsql;
 
-namespace KartMan.Host;
+namespace KartMan.Api;
 
 public sealed class HistoryDataRepository
 {

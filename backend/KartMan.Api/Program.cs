@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using KartMan.Api;
-using KartMan.Host;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+﻿using KartMan.Api;
 using Npgsql;
 using Serilog;
 using Serilog.Events;

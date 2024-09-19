@@ -1,17 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using KartMan.Api;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace KartMan.Host;
+namespace KartMan.Api;
 
 public sealed record ShortEntry(
     int lap, decimal time);
