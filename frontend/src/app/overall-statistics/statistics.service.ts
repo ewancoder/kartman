@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, retry, share, switchMap, timer } from 'rxjs';
+import { distinctUntilChanged, Observable, retry, share, switchMap, timer } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class StatisticsService {
@@ -8,9 +8,10 @@ export class StatisticsService {
 
     constructor(private http: HttpClient) {
         const totalLaps$ = this.http.get<number>(`https://api.kartman.typingrealm.com/api/total-laps`);
-        const polledData$ = timer(0, 3000).pipe(
+        const polledData$ = timer(0, 10000).pipe(
             switchMap(() => totalLaps$),
             retry(3),
+            distinctUntilChanged(),
             share()
         );
 

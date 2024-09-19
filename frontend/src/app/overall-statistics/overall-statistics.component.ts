@@ -13,7 +13,7 @@ import { StatisticsService } from './statistics.service';
 export class OverallStatisticsComponent {
     totalLaps$: Observable<number>;
 
-    constructor(private statistics: StatisticsService) {
+    constructor(statistics: StatisticsService) {
         this.totalLaps$ = statistics.totalLaps$;
     }
 }
