@@ -1,2 +1,3 @@
 /secrets.env
 /infrastructure-data/
+**/logs/
