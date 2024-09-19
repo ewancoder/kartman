@@ -11,5 +11,4 @@ import { LapSummary } from '../session.service';
 })
 export class StintSummaryComponent {
     @Input({ required: true }) summary!: LapSummary;
-    @Input() compact = false;
 }

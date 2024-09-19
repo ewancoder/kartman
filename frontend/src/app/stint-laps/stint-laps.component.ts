@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { LapEntry } from '../session.service';
-import { StintLapComponent } from '../stint-lap/stint-lap.component';
+import { StintLap, StintLapComponent } from '../stint-lap/stint-lap.component';
 
 @Component({
     selector: 'kman-stint-laps',
@@ -11,9 +11,14 @@ import { StintLapComponent } from '../stint-lap/stint-lap.component';
     styleUrl: './stint-laps.component.scss'
 })
 export class StintLapsComponent {
-    @Input({ required: true }) laps!: LapEntry[];
+    @Input({ required: true, transform: toStintLap }) laps!: StintLap[];
+}
 
-    getFastestLap() {
-        return Math.min(...this.laps.filter(lap => !lap.isInvalidLap).map(lap => lap.lapTime));
-    }
+function toStintLap(laps: LapEntry[]): StintLap[] {
+    const fastestLapTime = Math.min(...laps.filter(lap => !lap.isInvalidLap).map(lap => lap.lapTime));
+
+    return laps.map(lap => ({
+        ...lap,
+        fastest: lap.lapTime === fastestLapTime
+    }));
 }

@@ -76,6 +76,7 @@ export class StintComponent {
                 this.sessionService.validateLap(newLap.lapId).subscribe(() => {
                     newLap.isInvalidLap = false;
                     this.data.laps[index] = newLap;
+                    this.data.laps = [...this.data.laps];
                     this.cdr.detectChanges(); // TODO: Figure out how not to call this.
                 });
             } else {
@@ -83,6 +84,7 @@ export class StintComponent {
                 this.sessionService.invalidateLap(newLap.lapId).subscribe(() => {
                     newLap.isInvalidLap = true;
                     this.data.laps[index] = newLap;
+                    this.data.laps = [...this.data.laps];
                     this.cdr.detectChanges();
                 });
             }
