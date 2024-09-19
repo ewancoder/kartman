@@ -1,9 +1,5 @@
 import { Component, Input } from '@angular/core';
-
-export interface KartInfo {
-    kartId: string;
-    name: string;
-}
+import { KartInfo } from './kart-info.model';
 
 @Component({
     selector: 'kman-kart-info',
