@@ -22,8 +22,7 @@ public sealed class HistoryDataRepository
         _db = db;
     }
 
-    // TODO: Try IAsyncEnumerable.
-    public async ValueTask<IEnumerable<global::SessionInfo>> GetSessionInfosForDay(DateOnly day)
+    public async ValueTask<IEnumerable<SessionInfo>> GetSessionInfosForDay(DateOnly day)
     {
         using var _ = _logger.AddScoped("Day", day).BeginScope();
         try
@@ -34,12 +33,12 @@ public sealed class HistoryDataRepository
             using var command = connection.CreateCommand();
 
             command.CommandText = """
-                SELECT s.id, coalesce(s.updated_at, s.recorded_at), s.session, coalesce(w.air_temp, wh.air_temp)
+                SELECT s.id, s.recorded_at, s.session, coalesce(w.air_temp, wh.air_temp)
                 FROM session s
                 JOIN weather w ON s.weather_id = w.id
                 JOIN weather_history wh ON w.weather_history_id = wh.id
                 WHERE s.day = @day
-                ORDER BY s.recorded_at DESC
+                ORDER BY coalesce(s.updated_at, s.recorded_at) DESC
             """;
             command.Parameters.AddWithValue("day", day.DayNumber);
 

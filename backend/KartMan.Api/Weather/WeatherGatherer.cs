@@ -44,8 +44,13 @@ public sealed class WeatherGathererService : IHostedService, IDisposable
     private readonly IWeatherStore _weatherStore;
     private CancellationTokenSource? _combinedCts;
     private bool _isRunning = true;
-    private WeatherData? _lastData;
     private Task? _gathering;
+
+    /// <summary>
+    /// This prevents storing the same weather data multiple times.
+    /// After app restart, we still store the same weather. But it's ok.
+    /// </summary>
+    private WeatherData? _lastData;
 
     public WeatherGathererService(
         ILogger<WeatherGathererService> logger,
