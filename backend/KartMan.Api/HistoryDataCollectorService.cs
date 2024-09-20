@@ -3,9 +3,6 @@ using System.Text;
 
 namespace KartMan.Api;
 
-public sealed record ShortEntry(
-    int lap, decimal time);
-
 public sealed record LapEntry(
     DateTime recordedAtUtc,
     int session,
@@ -26,11 +23,11 @@ public sealed record LapEntry(
     public string SessionId => GetSessionIdentifier();
 }
 
-public sealed record RawJson(
+sealed file record RawJson(
     RawHeadInfo headinfo,
     object[][] results);
 
-public sealed record RawHeadInfo(
+sealed file record RawHeadInfo(
     string number,
     string len);
 
