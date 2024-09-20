@@ -171,10 +171,6 @@ public sealed class HistoryDataRepository
         {
             _logger.LogDebug("Saving lap data: {Day}, {@Entry}", day, entry);
 
-            // If app is restarted - it may try record multiple entries twice.
-            // Or multiple sessions twice.
-            // Restart only during nighttime or refactor this.
-
             var sessionId = entry.GetSessionIdentifier();
             if (!_savedSessions.Contains(sessionId)) // Performance optimization. REWRITE to use SQL instead of state in this repository.
             {
@@ -183,14 +179,13 @@ public sealed class HistoryDataRepository
                 _savedSessions.Add(sessionId);
             }
 
-            using var connection = await _db.OpenConnectionAsync();
-
-            using var command = connection.CreateCommand();
-            command.CommandText =
-            @"
-INSERT INTO lap_data (session_id, recorded_at, kart, lap, laptime, position, gap, weather_id, invalid_lap)
-VALUES (@session_id, @recorded_at, @kart, @lap, @laptime, @position, @gap, @weather_id, @invalid_lap)
-ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@position, gap=@gap, recorded_at=@recorded_at, invalid_lap=@invalid_lap;";
+            await using var connection = await _db.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
+                INSERT INTO lap_data (session_id, recorded_at, kart, lap, laptime, position, gap, weather_id, invalid_lap)
+                VALUES (@session_id, @recorded_at, @kart, @lap, @laptime, @position, @gap, @weather_id, @invalid_lap)
+                ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@position, gap=@gap, recorded_at=@recorded_at, invalid_lap=@invalid_lap;";
+            """;
             command.Parameters.AddWithValue("session_id", entry.GetSessionIdentifier());
             command.Parameters.AddWithValue("recorded_at", entry.recordedAtUtc);
             command.Parameters.AddWithValue("kart", entry.kart);
@@ -201,12 +196,12 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             command.Parameters.AddWithValue("weather_id", DBNull.Value);
             command.Parameters.AddWithValue("invalid_lap", entry.time <= 20 || entry.time >= 90);
 
-            _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
+            _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
             await command.ExecuteNonQueryAsync();
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Failed to store laptime data.");
+            _logger.LogError(exception, "Failed to store laptime data");
             throw;
         }
     }
@@ -215,9 +210,9 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
     {
         try
         {
-            _logger.LogInformation("Creating session {SessionId}.", entry.GetSessionIdentifier());
-            using var connection = await _db.OpenConnectionAsync();
-            using var transaction = await connection.BeginTransactionAsync();
+            _logger.LogInformation("Creating session {SessionId}", entry.GetSessionIdentifier());
+            await using var connection = await _db.OpenConnectionAsync();
+            await using var transaction = await connection.BeginTransactionAsync();
             var weather = await _weatherStore.GetLastWeatherBeforeAsync(entry.recordedAtUtc);
 
             static int GetWeather(WeatherData weather)
@@ -253,16 +248,17 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
                 return 2; // Yes Wind.
             }
 
-            // TODO: Do not create duplicate weather entries, get existing for this session (after app restart).
+            // TODO: If this method is called after API restart, it will insert one more weather without updating it on the already existing session.
             long weatherId;
             {
-                using var command = connection.CreateCommand();
+                await using var command = connection.CreateCommand();
                 command.Transaction = transaction;
 
-                command.CommandText = @"
-    INSERT INTO weather (recorded_at, weather_history_id, air_temp, humidity, precipitation, cloud, weather, sky, wind)
-    VALUES (@recorded_at, @weather_history_id, @air_temp, @humidity, @precipitation, @cloud, @weather, @sky, @wind)
-    RETURNING id";
+                command.CommandText = """
+                    INSERT INTO weather (recorded_at, weather_history_id, air_temp, humidity, precipitation, cloud, weather, sky, wind)
+                    VALUES (@recorded_at, @weather_history_id, @air_temp, @humidity, @precipitation, @cloud, @weather, @sky, @wind)
+                    RETURNING id";
+                """;
                 command.Parameters.AddWithValue("recorded_at", entry.recordedAtUtc);
                 command.Parameters.AddWithValue("weather_history_id", weather == null ? DBNull.Value : weather.Id);
                 command.Parameters.AddWithValue("air_temp", weather == null ? DBNull.Value : weather.TempC);
@@ -273,23 +269,24 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
                 command.Parameters.AddWithValue("sky", weather == null ? DBNull.Value : (int)GetSky(weather));
                 command.Parameters.AddWithValue("wind", weather == null ? DBNull.Value : (int)GetWind(weather));
 
-                _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
                 var idObj = await command.ExecuteScalarAsync()
                     ?? throw new InvalidOperationException("Database insert returned null result.");
                 weatherId = Convert.ToInt64(idObj.ToString() ?? throw new InvalidOperationException("Database insert returned null result"));
             }
 
             {
-                using var command = connection.CreateCommand();
+                await using var command = connection.CreateCommand();
                 command.Transaction = transaction;
 
-                command.CommandText = @"
-    WITH new_or_existing AS (
-        INSERT INTO session (id, recorded_at, day, session, total_length, weather_id, track_config, updated_at)
-        VALUES (@id, @recorded_at, @day, @session, @total_length, @weather_id, @track_config, @recorded_at)
-        ON CONFLICT (id) DO UPDATE SET updated_at = NOW()
-        RETURNING id
-    ) SELECT * FROM new_or_existing;";
+                command.CommandText = """
+                    WITH new_or_existing AS (
+                        INSERT INTO session (id, recorded_at, day, session, total_length, weather_id, track_config, updated_at)
+                        VALUES (@id, @recorded_at, @day, @session, @total_length, @weather_id, @track_config, @recorded_at)
+                        ON CONFLICT (id) DO UPDATE SET updated_at = NOW()
+                        RETURNING id
+                    ) SELECT * FROM new_or_existing;";
+                """;
 
                 command.Parameters.AddWithValue("id", entry.GetSessionIdentifier());
                 command.Parameters.AddWithValue("recorded_at", entry.recordedAtUtc);
@@ -299,16 +296,16 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
                 command.Parameters.AddWithValue("weather_id", weatherId);
                 command.Parameters.AddWithValue("track_config", DBNull.Value);
 
-                _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
+                _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
                 await command.ExecuteNonQueryAsync();
             }
 
-            _logger.LogDebug("Committing transaction.");
+            _logger.LogDebug("Committing transaction");
             await transaction.CommitAsync();
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Failed to create session & weather data.");
+            _logger.LogError(exception, "Failed to create session & weather data");
             throw;
         }
     }
