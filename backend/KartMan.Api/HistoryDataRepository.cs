@@ -6,10 +6,8 @@ namespace KartMan.Api;
 public sealed class HistoryDataRepository
 {
     private readonly ILogger<HistoryDataRepository> _logger;
-    private readonly HashSet<ComparisonEntry> _cache = [];
     private readonly HashSet<string> _savedSessions = [];
     private readonly IWeatherStore _weatherStore;
-    private readonly SemaphoreSlim _lock = new(1, 1);
     private readonly NpgsqlDataSource _db;
 
     public HistoryDataRepository(
@@ -173,35 +171,16 @@ public sealed class HistoryDataRepository
         {
             _logger.LogDebug("Saving lap data: {Day}, {@Entry}", day, entry);
 
-            if (_cache.Contains(entry.ToComparisonEntry()))
-            {
-                _logger.LogDebug("Already saved this entry, skipping");
-                return; // Saves entry only if it hasn't been saved yet.
-            }
-
             // If app is restarted - it may try record multiple entries twice.
             // Or multiple sessions twice.
             // Restart only during nighttime or refactor this.
 
             var sessionId = entry.GetSessionIdentifier();
-            if (!_savedSessions.Contains(sessionId))
+            if (!_savedSessions.Contains(sessionId)) // Performance optimization. REWRITE to use SQL instead of state in this repository.
             {
-                // Session has not been created yet for this entry.
-                // Creating.
-                await _lock.WaitAsync();
-                try
-                {
-                    if (!_savedSessions.Contains(sessionId))
-                    {
-                        _logger.LogDebug("Session has not been created yet for this entry. Creating the session {SessionId}.", sessionId);
-                        await CreateOrGetSessionAsync(day, entry);
-                        _savedSessions.Add(sessionId);
-                    }
-                }
-                finally
-                {
-                    _lock.Release();
-                }
+                _logger.LogDebug("Session has not been created yet for this entry. Creating the session {SessionId}.", sessionId);
+                await CreateOrGetSessionAsync(day, entry);
+                _savedSessions.Add(sessionId);
             }
 
             using var connection = await _db.OpenConnectionAsync();
@@ -224,7 +203,6 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
 
             _logger.LogDebug("Executing SQL command {Command}.", command.CommandText);
             await command.ExecuteNonQueryAsync();
-            _cache.Add(entry.ToComparisonEntry()); // May be a slight racing condition. Consider locking around these.
         }
         catch (Exception exception)
         {

@@ -49,6 +49,7 @@ public sealed class HistoryDataCollectorService : IHostedService
     private string? _lastSession;
     private bool _dayEnded = false;
     private readonly ILogger<HistoryDataCollectorService> _logger;
+    private readonly HashSet<ComparisonEntry> _cache = [];
 
     public HistoryDataCollectorService(
         IHttpClientFactory httpClientFactory,
@@ -193,7 +194,14 @@ public sealed class HistoryDataCollectorService : IHostedService
             _logger.LogInformation("Saving karting entries to the database.");
             foreach (var entry in entries)
             {
-                await _repository.SaveLapAsync(DateOnly.FromDateTime(DateTime.UtcNow), entry!);
+                // Just a performance optimization for when the app is already running.
+                // To not execute extra SQL queries every 3 seconds.
+                if (_cache.Contains(entry!.ToComparisonEntry()))
+                    continue;
+
+                await _repository.SaveLapAsync(DateOnly.FromDateTime(DateTime.UtcNow), entry);
+
+                _cache.Add(entry.ToComparisonEntry());
             }
         }
         catch (Exception exception)
