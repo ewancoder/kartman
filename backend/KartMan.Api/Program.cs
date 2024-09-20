@@ -15,7 +15,7 @@ builder.Services.AddSingleton<NpgsqlDataSource>(p =>
 });
 builder.Services.AddTransient<IWeatherStore, WeatherStore>();
 builder.Services.AddTransient<IWeatherRetriever, WeatherRetriever>();
-builder.Services.AddSingleton<HistoryDataRepository>(); // It is a singleton because it needs locking / synchronization.
+builder.Services.AddSingleton<HistoryDataRepository>(); // It is a singleton because it needs state for now.
 builder.Services.AddHostedService<WeatherGathererService>();
 builder.Services.AddHostedService<HistoryDataCollectorService>();
 
@@ -52,6 +52,7 @@ var repository = app.Services.GetRequiredService<HistoryDataRepository>();
 
 app.MapGet("/api/sessions/{dateString}", async (string dateString) =>
 {
+    // TODO: Consider sending date from frontend instead of 'today', so that we can handle user timezone.
     var date = dateString == "today"
         ? DateTime.UtcNow
         : DateTime.ParseExact(dateString, "dd-MM-yyyy", null);
@@ -111,19 +112,3 @@ app.MapGet("/api/first-date", async () =>
 
 app.UseCors("Cors");
 await app.RunAsync();
-
-public record SessionInfo(
-    string SessionId,
-    string Name,
-    DateTime StartedAt,
-    WeatherInfo WeatherInfo);
-
-public record WeatherInfo(
-    decimal? AirTempC);
-
-public record KartDrive(
-    long LapId,
-    string Kart,
-    int LapNumber,
-    decimal LapTime,
-    bool InvalidLap);

@@ -3,6 +3,22 @@ using Npgsql;
 
 namespace KartMan.Api;
 
+public record SessionInfo(
+    string SessionId,
+    string Name,
+    DateTime StartedAt,
+    WeatherInfo WeatherInfo);
+
+public record WeatherInfo(
+    decimal? AirTempC);
+
+public record KartDrive(
+    long LapId,
+    string Kart,
+    int LapNumber,
+    decimal LapTime,
+    bool InvalidLap);
+
 public sealed class HistoryDataRepository
 {
     private readonly ILogger<HistoryDataRepository> _logger;
