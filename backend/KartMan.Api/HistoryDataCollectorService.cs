@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace KartMan.Api;
 
@@ -204,52 +203,3 @@ public sealed class HistoryDataCollectorService : IHostedService
     }
 }
 
-public enum Weather
-{
-    Dry = 1,
-    Damp,
-    Wet,
-    ExtraWet
-}
-
-public enum Sky
-{
-    Clear = 1,
-    Cloudy,
-    Overcast
-}
-
-public enum Wind
-{
-    NoWind = 1,
-    Yes = 2
-}
-
-public enum TrackTemp
-{
-    Cold = 1,
-    Cool,
-    Warm,
-    Hot
-}
-
-public enum TrackConfig
-{
-    Short = 1,
-    Long,
-    ShortReverse,
-    LongReverse
-}
-
-public record SessionInfo(
-    Weather? Weather,
-    Sky? Sky,
-    Wind? Wind,
-    decimal? AirTempC,
-    decimal? TrackTempC,
-    TrackTemp? TrackTempApproximation,
-    TrackConfig? TrackConfig)
-{
-    public bool IsValid => Weather != null || Sky != null || Wind != null || AirTempC != null || TrackTempC != null
-        || TrackTempApproximation != null || TrackConfig != null;
-}

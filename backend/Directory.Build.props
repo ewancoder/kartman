@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Using Include="Microsoft.Extensions.Logging" />
+    <Using Include="System.Text.Json" />
   </ItemGroup>
   <ItemDefinitionGroup>
     <PackageReference>

@@ -1,4 +1,5 @@
 ﻿using KartMan.Api;
+using KartMan.Api.Weather;
 using Npgsql;
 using Serilog;
 using Serilog.Events;
@@ -14,8 +15,8 @@ builder.Services.AddSingleton<NpgsqlDataSource>(p =>
 });
 builder.Services.AddTransient<IWeatherStore, WeatherStore>();
 builder.Services.AddTransient<IWeatherRetriever, WeatherRetriever>();
-builder.Services.AddSingleton<WeatherGatherer>();
 builder.Services.AddSingleton<HistoryDataRepository>(); // It is a singleton because it needs locking / synchronization.
+builder.Services.AddHostedService<WeatherGathererService>();
 builder.Services.AddHostedService<HistoryDataCollectorService>();
 
 var isDebug = false;
@@ -44,13 +45,8 @@ builder.Services.AddCors(x =>
 });
 
 var app = builder.Build();
-var weatherStore = app.Services.GetRequiredService<IWeatherStore>();
-app.Services.GetRequiredService<WeatherGatherer>();
 
-app.MapGet("/diag", () =>
-{
-    return DateTime.UtcNow;
-});
+app.MapGet("/diag", () => DateTime.UtcNow);
 
 var repository = app.Services.GetRequiredService<HistoryDataRepository>();
 

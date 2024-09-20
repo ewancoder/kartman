@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using KartMan.Api.Weather;
+using Npgsql;
 
 namespace KartMan.Api;
 
@@ -251,37 +252,37 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             using var transaction = await connection.BeginTransactionAsync();
             var weather = await _weatherStore.GetWeatherDataForAsync(entry.recordedAtUtc);
 
-            static Weather GetWeather(WeatherData weather)
+            static int GetWeather(WeatherData weather)
             {
                 if (weather.PrecipitationMm == 0)
-                    return Weather.Dry;
+                    return 1; // Dry.
 
                 if (weather.PrecipitationMm < 1)
-                    return Weather.Damp;
+                    return 2; // Damp.
 
                 if (weather.PrecipitationMm < 5)
-                    return Weather.Wet;
+                    return 3; // Wet.
 
-                return Weather.ExtraWet;
+                return 4; // Extra wet.
             }
 
-            static Sky GetSky(WeatherData weather)
+            static int GetSky(WeatherData weather)
             {
                 if (weather.Cloud < 15)
-                    return Sky.Clear;
+                    return 1; // Clear.
 
                 if (weather.Cloud < 70)
-                    return Sky.Cloudy;
+                    return 2; // Cloudy.
 
-                return Sky.Overcast;
+                return 3; // Overcast.
             }
 
-            static Wind GetWind(WeatherData weather)
+            static int GetWind(WeatherData weather)
             {
                 if (weather.WindKph < 10)
-                    return Wind.NoWind;
+                    return 1; // No Wind.
 
-                return Wind.Yes;
+                return 2; // Yes Wind.
             }
 
             // TODO: Do not create duplicate weather entries, get existing for this session (after app restart).
