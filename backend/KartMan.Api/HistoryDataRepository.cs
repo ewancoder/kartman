@@ -29,8 +29,8 @@ public sealed class HistoryDataRepository
         {
             _logger.LogDebug("Getting session infos for day {Day}", day);
 
-            using var connection = await _db.OpenConnectionAsync();
-            using var command = connection.CreateCommand();
+            await using var connection = await _db.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
 
             command.CommandText = """
                 SELECT s.id, s.recorded_at, s.session, coalesce(w.air_temp, wh.air_temp)
@@ -42,23 +42,21 @@ public sealed class HistoryDataRepository
             """;
             command.Parameters.AddWithValue("day", day.DayNumber);
 
-            _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
-            var list = new List<global::SessionInfo>();
-            using (var reader = await command.ExecuteReaderAsync())
+            _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+            var list = new List<SessionInfo>();
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
-                while (await reader.ReadAsync())
-                {
-                    var sessionId = reader.GetString(0);
-                    var recordedAt = reader.GetDateTime(1);
-                    var session = reader.GetInt32(2);
-                    var airTemp = reader.GetDecimal(3);
+                var sessionId = reader.GetString(0);
+                var recordedAt = reader.GetDateTime(1);
+                var session = reader.GetInt32(2);
+                var airTemp = reader.GetDecimal(3);
 
-                    list.Add(new(
-                        sessionId,
-                        $"Session {session}",
-                        recordedAt,
-                        new(airTemp)));
-                }
+                list.Add(new(
+                    sessionId,
+                    $"Session {session}",
+                    recordedAt,
+                    new(airTemp)));
             }
 
             return list;
@@ -72,8 +70,8 @@ public sealed class HistoryDataRepository
 
     public async ValueTask<DateTime> GetFirstRecordedTimeAsync()
     {
-        using var connection = await _db.OpenConnectionAsync();
-        using var command = connection.CreateCommand();
+        await using var connection = await _db.OpenConnectionAsync();
+        await using var command = connection.CreateCommand();
 
         command.CommandText = """
             SELECT d.recorded_at
@@ -82,20 +80,18 @@ public sealed class HistoryDataRepository
             LIMIT 1
         """;
 
-        _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
-        using var reader = await command.ExecuteReaderAsync();
+        _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+        await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
-        {
             return reader.GetDateTime(0);
-        }
 
-        throw new InvalidOperationException("Could not get total laps driven.");
+        throw new InvalidOperationException("Could not get first recorded time");
     }
 
     public async ValueTask<long> GetTotalLapsDrivenAsync()
     {
-        using var connection = await _db.OpenConnectionAsync();
-        using var command = connection.CreateCommand();
+        await using var connection = await _db.OpenConnectionAsync();
+        await using var command = connection.CreateCommand();
 
         command.CommandText = """
             SELECT d.id
@@ -105,16 +101,13 @@ public sealed class HistoryDataRepository
         """;
 
         _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
-        using var reader = await command.ExecuteReaderAsync();
+        await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
-        {
             return reader.GetInt64(0);
-        }
 
-        throw new InvalidOperationException("Could not get total laps driven.");
+        throw new InvalidOperationException("Could not get total laps driven");
     }
 
-    // TODO: Try IAsyncEnumerable.
     public async ValueTask<IEnumerable<KartDrive>> GetHistoryForSessionAsync(string sessionId)
     {
         using var _ = _logger.AddScoped("SessionId", sessionId).BeginScope();
@@ -122,8 +115,8 @@ public sealed class HistoryDataRepository
         {
             _logger.LogDebug("Getting history for session {SessionId}", sessionId);
 
-            using var connection = await _db.OpenConnectionAsync();
-            using var command = connection.CreateCommand();
+            await using var connection = await _db.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
 
             command.CommandText = """
                 SELECT d.kart, d.lap, d.laptime, d.id, d.invalid_lap
@@ -132,22 +125,20 @@ public sealed class HistoryDataRepository
             """;
             command.Parameters.AddWithValue("sessionId", sessionId);
 
-            _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
+            _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
             var list = new List<KartDrive>();
-            using (var reader = await command.ExecuteReaderAsync())
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
-                while (await reader.ReadAsync())
-                {
-                    var kart = reader.GetString(0);
-                    var lap = reader.GetInt32(1);
-                    var time = reader.GetDecimal(2);
-                    var lapId = reader.GetInt64(3);
-                    var invalidLap = !await reader.IsDBNullAsync(4)
-                        && reader.GetBoolean(4);
+                var kart = reader.GetString(0);
+                var lap = reader.GetInt32(1);
+                var time = reader.GetDecimal(2);
+                var lapId = reader.GetInt64(3);
+                var invalidLap = !await reader.IsDBNullAsync(4)
+                    && reader.GetBoolean(4);
 
-                    // TODO: Consider storing unique Kart IDs for each separate driving session.
-                    list.Add(new(lapId, kart, lap, time, invalidLap));
-                }
+                // TODO: Consider storing unique Kart IDs for each separate driving session.
+                list.Add(new(lapId, kart, lap, time, invalidLap));
             }
 
             return list;
@@ -161,8 +152,8 @@ public sealed class HistoryDataRepository
 
     public async ValueTask UpdateLapInvalidStatusAsync(long lapId, bool isInvalid)
     {
-        using var connection = await _db.OpenConnectionAsync();
-        using var command = connection.CreateCommand();
+        await using var connection = await _db.OpenConnectionAsync();
+        await using var command = connection.CreateCommand();
 
         command.CommandText = """
             UPDATE lap_data l
@@ -180,11 +171,11 @@ public sealed class HistoryDataRepository
         var _ = _logger.AddScoped("Day", day);
         try
         {
-            _logger.LogDebug("Saving lap data: {Day}, {@Entry}.", day, entry);
+            _logger.LogDebug("Saving lap data: {Day}, {@Entry}", day, entry);
 
             if (_cache.Contains(entry.ToComparisonEntry()))
             {
-                _logger.LogDebug("Already saved this entry, skipping.");
+                _logger.LogDebug("Already saved this entry, skipping");
                 return; // Saves entry only if it hasn't been saved yet.
             }
 
@@ -242,7 +233,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
         }
     }
 
-    public async Task CreateOrGetSessionAsync(DateOnly day, LapEntry entry)
+    private async Task CreateOrGetSessionAsync(DateOnly day, LapEntry entry)
     {
         try
         {

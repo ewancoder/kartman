@@ -44,7 +44,7 @@ public sealed class WeatherStore : IWeatherStore
             command.Parameters.AddWithValue("time", time);
 
             _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
-            using var reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
                 var data = JsonSerializer.Deserialize<WeatherData>(reader.GetString(1))
