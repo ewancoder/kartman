@@ -250,7 +250,7 @@ ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@po
             _logger.LogInformation("Creating session {SessionId}.", entry.GetSessionIdentifier());
             using var connection = await _db.OpenConnectionAsync();
             using var transaction = await connection.BeginTransactionAsync();
-            var weather = await _weatherStore.GetWeatherDataForAsync(entry.recordedAtUtc);
+            var weather = await _weatherStore.GetLastWeatherBeforeAsync(entry.recordedAtUtc);
 
             static int GetWeather(WeatherData weather)
             {

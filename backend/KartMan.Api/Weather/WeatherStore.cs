@@ -8,7 +8,7 @@ public interface IWeatherStore
     /// Gets the latest weather available that was recorded BEFORE the given time,
     /// Otherwise returns null.
     /// </summary>
-    ValueTask<WeatherData?> GetWeatherDataForAsync(DateTime time);
+    ValueTask<WeatherData?> GetLastWeatherBeforeAsync(DateTime time);
     ValueTask StoreAsync(WeatherData data);
 }
 
@@ -25,21 +25,22 @@ public sealed class WeatherStore : IWeatherStore
         _db = db;
     }
 
-    public async ValueTask<WeatherData?> GetWeatherDataForAsync(DateTime time)
+    public async ValueTask<WeatherData?> GetLastWeatherBeforeAsync(DateTime time)
     {
         using var _ = _logger.AddScoped("Time", time)
             .BeginScope();
 
         try
         {
-            using var connection = await _db.OpenConnectionAsync();
-            await using var command = new NpgsqlCommand("""
+            await using var connection = await _db.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
                 SELECT id, json_data
                 FROM weather_history
                 WHERE recorded_at < @time
                 ORDER BY recorded_at DESC
-                LIMIT 1
-            """, connection);
+                LIMIT 1;
+            """;
             command.Parameters.AddWithValue("time", time);
 
             _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
@@ -72,21 +73,22 @@ public sealed class WeatherStore : IWeatherStore
 
         try
         {
-            using var connection = await _db.OpenConnectionAsync();
-            await using var cmd = new NpgsqlCommand("""
+            await using var connection = await _db.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
                 INSERT INTO weather_history (recorded_at, air_temp, humidity, precipitation, cloud, json_data)
-                VALUES (@recorded_at, @air_temp, @humidity, @precipitation, @cloud, @json_data);", connection);
-            """);
-            cmd.Parameters.AddWithValue("recorded_at", data.TimestampUtc);
-            cmd.Parameters.AddWithValue("air_temp", data.TempC);
-            cmd.Parameters.AddWithValue("humidity", data.Humidity);
-            cmd.Parameters.AddWithValue("precipitation", data.PrecipitationMm);
-            cmd.Parameters.AddWithValue("cloud", data.Cloud);
-            var jsonData = cmd.Parameters.Add("json_data", NpgsqlTypes.NpgsqlDbType.Json);
+                VALUES (@recorded_at, @air_temp, @humidity, @precipitation, @cloud, @json_data);
+            """;
+            command.Parameters.AddWithValue("recorded_at", data.TimestampUtc);
+            command.Parameters.AddWithValue("air_temp", data.TempC);
+            command.Parameters.AddWithValue("humidity", data.Humidity);
+            command.Parameters.AddWithValue("precipitation", data.PrecipitationMm);
+            command.Parameters.AddWithValue("cloud", data.Cloud);
+            var jsonData = command.Parameters.Add("json_data", NpgsqlTypes.NpgsqlDbType.Json);
             jsonData.Value = JsonSerializer.Serialize(data);
 
-            _logger.LogDebug("Executing SQL command: {Command}", cmd.CommandText);
-            await cmd.ExecuteNonQueryAsync();
+            _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
+            await command.ExecuteNonQueryAsync();
         }
         catch (Exception exception)
         {

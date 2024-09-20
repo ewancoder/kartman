@@ -31,18 +31,21 @@ public sealed record WeatherComparison(
             weatherData.FeelsLikeC,
             weatherData.DewPointC);
     }
+
+    public static bool AreEqual(WeatherData left, WeatherData right)
+        => FromWeatherData(left) == FromWeatherData(right);
 }
 
-
-
-public sealed class WeatherGathererService : IHostedService
+public sealed class WeatherGathererService : IHostedService, IDisposable
 {
+    private readonly CancellationTokenSource _cts = new();
     private readonly ILogger<WeatherGathererService> _logger;
     private readonly IWeatherRetriever _weatherRetriever;
     private readonly IWeatherStore _weatherStore;
+    private CancellationTokenSource? _combinedCts;
+    private bool _isRunning = true;
     private WeatherData? _lastData;
     private Task? _gathering;
-    private bool _isRunning = true;
 
     public WeatherGathererService(
         ILogger<WeatherGathererService> logger,
@@ -56,18 +59,27 @@ public sealed class WeatherGathererService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _gathering = GatherAsync(cancellationToken);
+        _combinedCts = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken, _cts.Token);
+
+        _gathering = GatherAsync(_combinedCts.Token);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        // TODO: Cancel local CTS here to stop Task.Delay waiting for one minute.
         _isRunning = false;
+        await _cts.CancelAsync();
+    }
+
+    public void Dispose()
+    {
+        _combinedCts?.Dispose();
+        _cts.Dispose();
     }
 
     private async Task GatherAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Started gathering weather.");
+        _logger.LogInformation("Started gathering weather");
 
         while (_isRunning)
         {
@@ -79,15 +91,15 @@ public sealed class WeatherGathererService : IHostedService
             try
             {
                 await GatherWeatherAsync();
-                _logger.LogDebug("Successfully gathered weather.");
+                _logger.LogDebug("Successfully gathered weather");
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Failed to gather and/or store the weather.");
+                _logger.LogError(exception, "Failed to gather and/or store the weather");
             }
             finally
             {
-                await Task.Delay(TimeSpan.FromMinutes(1));
+                await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
             }
         }
     }
@@ -96,18 +108,21 @@ public sealed class WeatherGathererService : IHostedService
     {
         var data = await _weatherRetriever.GetWeatherAsync();
         if (data == null)
-            return; // Could not get the weather from weather api.
-
-        if (_lastData == null || WeatherComparison.FromWeatherData(_lastData) != WeatherComparison.FromWeatherData(data))
         {
-            _logger.LogInformation("Gathered weather that is different from last recorded value. Saving it.");
+            _logger.LogWarning("Could not get the Weather from weather API.");
+            return;
+        }
+
+        if (_lastData is null || !WeatherComparison.AreEqual(_lastData, data))
+        {
+            _logger.LogInformation("Gathered weather that is different from last recorded value. Saving it");
             await _weatherStore.StoreAsync(data);
             _lastData = data;
-            _logger.LogInformation("Successfully saved the weather.");
+            _logger.LogInformation("Successfully saved the weather");
         }
         else
         {
-            _logger.LogDebug("Weather doesn't differ from the last recorded value, skipping gathering.");
+            _logger.LogTrace("Weather doesn't differ from the last recorded value, skipping gathering");
         }
     }
 }
