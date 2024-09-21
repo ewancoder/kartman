@@ -42,9 +42,12 @@ export class StintComponent {
 
         const fastestLapTime = Math.min(...allTimes);
         let slowestLapTime = Math.max(...allTimes);
-        let averageLapTime = allTimes.reduce((a, b) => a + b) / totalAllLaps;
+        let averageLapTime = allTimes.length === 0 ? 0 : allTimes[0];
+        if (allTimes.length > 1) {
+            averageLapTime = allTimes.reduce((a, b) => a + b) / totalAllLaps;
+        }
 
-        const fastestLap: number = validLaps.find(lap => lap.lapTime === fastestLapTime)!.lapNumber;
+        const fastestLap: number = validLaps.find(lap => lap.lapTime === fastestLapTime)?.lapNumber ?? 0;
 
         if (totalTrueLaps > 0) {
             //fastestLapTime = Math.min(...trueTimes);
