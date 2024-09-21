@@ -52,7 +52,7 @@ public sealed class HistoryDataRepository
                 JOIN weather w ON s.weather_id = w.id
                 JOIN weather_history wh ON w.weather_history_id = wh.id
                 WHERE s.day = @day
-                ORDER BY coalesce(s.updated_at, s.recorded_at) DESC
+                ORDER BY coalesce(s.updated_at, s.recorded_at) DESC;
             """;
             command.Parameters.AddWithValue("day", day.DayNumber);
 
@@ -91,7 +91,7 @@ public sealed class HistoryDataRepository
             SELECT d.recorded_at
             FROM lap_data d
             ORDER BY d.recorded_at
-            LIMIT 1
+            LIMIT 1;
         """;
 
         _logger.LogDebug("Executing SQL command: {Command}", command.CommandText);
@@ -111,7 +111,7 @@ public sealed class HistoryDataRepository
             SELECT d.id
             FROM lap_data d
             ORDER BY d.id DESC
-            LIMIT 1
+            LIMIT 1;
         """;
 
         _logger.LogDebug("Executing SQL command {Command}", command.CommandText);
@@ -135,7 +135,7 @@ public sealed class HistoryDataRepository
             command.CommandText = """
                 SELECT d.kart, d.lap, d.laptime, d.id, d.invalid_lap
                 FROM lap_data d
-                WHERE d.session_id = @sessionId
+                WHERE d.session_id = @sessionId;
             """;
             command.Parameters.AddWithValue("sessionId", sessionId);
 
@@ -172,7 +172,7 @@ public sealed class HistoryDataRepository
         command.CommandText = """
             UPDATE lap_data l
             SET invalid_lap = @isInvalid
-            WHERE l.id = @lapId
+            WHERE l.id = @lapId;
         """;
         command.Parameters.AddWithValue("lapId", lapId);
         command.Parameters.AddWithValue("isInvalid", isInvalid);
@@ -200,7 +200,7 @@ public sealed class HistoryDataRepository
             command.CommandText = """
                 INSERT INTO lap_data (session_id, recorded_at, kart, lap, laptime, position, gap, weather_id, invalid_lap)
                 VALUES (@session_id, @recorded_at, @kart, @lap, @laptime, @position, @gap, @weather_id, @invalid_lap)
-                ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@position, gap=@gap, recorded_at=@recorded_at, invalid_lap=@invalid_lap;";
+                ON CONFLICT (session_id, kart, lap) DO UPDATE SET laptime=@laptime, position=@position, gap=@gap, recorded_at=@recorded_at, invalid_lap=@invalid_lap;
             """;
             command.Parameters.AddWithValue("session_id", entry.GetSessionIdentifier());
             command.Parameters.AddWithValue("recorded_at", entry.recordedAtUtc);
@@ -273,7 +273,7 @@ public sealed class HistoryDataRepository
                 command.CommandText = """
                     INSERT INTO weather (recorded_at, weather_history_id, air_temp, humidity, precipitation, cloud, weather, sky, wind)
                     VALUES (@recorded_at, @weather_history_id, @air_temp, @humidity, @precipitation, @cloud, @weather, @sky, @wind)
-                    RETURNING id";
+                    RETURNING id;
                 """;
                 command.Parameters.AddWithValue("recorded_at", entry.recordedAtUtc);
                 command.Parameters.AddWithValue("weather_history_id", weather == null ? DBNull.Value : weather.Id);
@@ -301,7 +301,7 @@ public sealed class HistoryDataRepository
                         VALUES (@id, @recorded_at, @day, @session, @total_length, @weather_id, @track_config, @recorded_at)
                         ON CONFLICT (id) DO UPDATE SET updated_at = NOW()
                         RETURNING id
-                    ) SELECT * FROM new_or_existing;";
+                    ) SELECT * FROM new_or_existing;
                 """;
 
                 command.Parameters.AddWithValue("id", entry.GetSessionIdentifier());
