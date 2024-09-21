@@ -1,11 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace KartMan.Api;
-
-public sealed record ShortEntry(
-    int lap, decimal time);
 
 public sealed record LapEntry(
     DateTime recordedAtUtc,
@@ -27,11 +23,11 @@ public sealed record LapEntry(
     public string SessionId => GetSessionIdentifier();
 }
 
-public sealed record RawJson(
+sealed file record RawJson(
     RawHeadInfo headinfo,
     object[][] results);
 
-public sealed record RawHeadInfo(
+sealed file record RawHeadInfo(
     string number,
     string len);
 
@@ -50,6 +46,7 @@ public sealed class HistoryDataCollectorService : IHostedService
     private string? _lastSession;
     private bool _dayEnded = false;
     private readonly ILogger<HistoryDataCollectorService> _logger;
+    private readonly HashSet<ComparisonEntry> _cache = [];
 
     public HistoryDataCollectorService(
         IHttpClientFactory httpClientFactory,
@@ -194,7 +191,14 @@ public sealed class HistoryDataCollectorService : IHostedService
             _logger.LogInformation("Saving karting entries to the database.");
             foreach (var entry in entries)
             {
-                await _repository.SaveLapAsync(DateOnly.FromDateTime(DateTime.UtcNow), entry!);
+                // Just a performance optimization for when the app is already running.
+                // To not execute extra SQL queries every 3 seconds.
+                if (_cache.Contains(entry!.ToComparisonEntry()))
+                    continue;
+
+                await _repository.SaveLapAsync(DateOnly.FromDateTime(DateTime.UtcNow), entry);
+
+                _cache.Add(entry.ToComparisonEntry());
             }
         }
         catch (Exception exception)
@@ -204,52 +208,3 @@ public sealed class HistoryDataCollectorService : IHostedService
     }
 }
 
-public enum Weather
-{
-    Dry = 1,
-    Damp,
-    Wet,
-    ExtraWet
-}
-
-public enum Sky
-{
-    Clear = 1,
-    Cloudy,
-    Overcast
-}
-
-public enum Wind
-{
-    NoWind = 1,
-    Yes = 2
-}
-
-public enum TrackTemp
-{
-    Cold = 1,
-    Cool,
-    Warm,
-    Hot
-}
-
-public enum TrackConfig
-{
-    Short = 1,
-    Long,
-    ShortReverse,
-    LongReverse
-}
-
-public record SessionInfo(
-    Weather? Weather,
-    Sky? Sky,
-    Wind? Wind,
-    decimal? AirTempC,
-    decimal? TrackTempC,
-    TrackTemp? TrackTempApproximation,
-    TrackConfig? TrackConfig)
-{
-    public bool IsValid => Weather != null || Sky != null || Wind != null || AirTempC != null || TrackTempC != null
-        || TrackTempApproximation != null || TrackConfig != null;
-}

@@ -3,7 +3,7 @@
 public interface IScopedLogger
 {
     IScopedLogger AddScoped(string key, object? value);
-    IDisposable BeginScope();
+    IDisposable? BeginScope();
 }
 
 public static class LoggerExtensions
