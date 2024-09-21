@@ -16,7 +16,7 @@ export class StintSummaryComponent {
         this.summary = this.getSummary(laps);
     }
 
-    getSummary(laps: LapEntry[]): LapSummary {
+    private getSummary(laps: LapEntry[]): LapSummary {
         const validLaps = laps.filter(lap => !lap.isInvalidLap);
 
         // TODO: Consider getting this from backend to avoid calculations on frontend.
