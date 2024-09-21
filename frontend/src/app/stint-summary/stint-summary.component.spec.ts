@@ -219,6 +219,17 @@ describe('StintSummaryComponent', () => {
         it('should have consistency', () => expect(component.summary.consistency).toBe(14));
     });
 
+    describe('should show 3 fraction digits', () => {
+        beforeEach(async () => {
+            component.laps = [{ lapId: 1, lapNumber: 1, lapTime: 23.752123, isInvalidLap: false }];
+            await fixture.whenStable();
+        });
+
+        it('should show fastest laptime', () => shouldShow(3, 'Fast', '23.752'));
+        it('should show average laptime', () => shouldShow(4, 'Avg', '23.752'));
+        it('should show slowest laptime', () => shouldShow(5, 'Slow', '23.752'));
+    });
+
     function shouldShow(row: number, title: string, value: string): void {
         const allRows = fixture.nativeElement.querySelectorAll('tr');
         expect(allRows[row - 1].cells[0].textContent).toBe(title);
