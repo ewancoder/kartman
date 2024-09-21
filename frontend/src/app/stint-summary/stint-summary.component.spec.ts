@@ -111,13 +111,43 @@ describe('StintSummaryComponent', () => {
         });
     });
 
+    describe('when many laps but only one is valid', () => {
+        beforeEach(async () => {
+            component.laps = [
+                { lapId: 1, lapNumber: 1, lapTime: 10, isInvalidLap: true },
+                { lapId: 2, lapNumber: 2, lapTime: 20, isInvalidLap: true },
+                { lapId: 3, lapNumber: 3, lapTime: 30, isInvalidLap: true },
+                { lapId: 4, lapNumber: 4, lapTime: 40, isInvalidLap: false }
+            ];
+            await fixture.whenStable();
+        });
+
+        it('should have 4 total laps', () => expect(component.summary.totalLaps).toBe(4));
+        it('should have 1 valid total lap', () => expect(component.summary.validLaps).toBe(1));
+        it('should have fastest lap', () => expect(component.summary.fastestLap).toBe(4));
+        it('should have fastest laptime', () => expect(component.summary.fastestLapTime).toBe(40));
+        it('should have average laptime', () => expect(component.summary.averageLapTime).toBe(40));
+        it('should have slowest laptime', () => expect(component.summary.slowestLapTime).toBe(40));
+        it('should not have consistency', () => expect(component.summary.consistency).toBe(0));
+
+        it('should show total laps', () => shouldShow(1, 'Total', '4'));
+        it('should show fastest lap N', () => shouldShow(2, 'Fast N', '4'));
+        it('should show fastest laptime', () => shouldShow(3, 'Fast', '40.000'));
+        it('should show average laptime', () => shouldShow(4, 'Avg', '40.000'));
+        it('should show slowest laptime', () => shouldShow(5, 'Slow', '40.000'));
+        it('should not show consistency', () => {
+            const allRows = fixture.nativeElement.querySelectorAll('tr');
+            expect(Array.from(allRows).length).toBe(5);
+        });
+    });
+
     describe('when both valid and invalid laps and fastest is invalid', () => {
         beforeEach(async () => {
             component.laps = [
                 { lapId: 1, lapNumber: 1, lapTime: 10, isInvalidLap: true },
                 { lapId: 2, lapNumber: 2, lapTime: 20, isInvalidLap: false },
                 { lapId: 3, lapNumber: 3, lapTime: 30, isInvalidLap: true },
-                { lapId: 3, lapNumber: 3, lapTime: 40, isInvalidLap: false }
+                { lapId: 4, lapNumber: 4, lapTime: 40, isInvalidLap: false }
             ];
             await fixture.whenStable();
         });
