@@ -16,18 +16,19 @@ export class StintSummaryComponent {
         this.summary = this.getSummary(laps);
     }
 
-    getSummary(laps: LapEntry[]): LapSummary {
+    private getSummary(laps: LapEntry[]): LapSummary {
         const validLaps = laps.filter(lap => !lap.isInvalidLap);
 
         // TODO: Consider getting this from backend to avoid calculations on frontend.
         const totalAllLaps = validLaps.length;
-        const totalTrueLaps = validLaps.length - 4;
+        const totalTrueLaps = validLaps.length >= 8 ? validLaps.length - 4 : validLaps.length;
 
         const allTimes = validLaps.map(lap => lap.lapTime);
-        const trueTimes = validLaps.slice(2, -2).map(lap => lap.lapTime);
+        const trueTimes =
+            validLaps.length >= 8 ? validLaps.slice(2, -2).map(lap => lap.lapTime) : validLaps.map(lap => lap.lapTime);
 
-        const fastestLapTime = Math.min(...allTimes);
-        let slowestLapTime = Math.max(...allTimes);
+        const fastestLapTime = allTimes.length === 0 ? 0 : Math.min(...allTimes);
+        let slowestLapTime = allTimes.length === 0 ? 0 : Math.max(...allTimes);
         let averageLapTime = allTimes.length === 0 ? 0 : allTimes[0];
         if (allTimes.length > 1) {
             averageLapTime = allTimes.reduce((a, b) => a + b) / totalAllLaps;
@@ -46,7 +47,8 @@ export class StintSummaryComponent {
         return {
             fastestLap: fastestLap,
             fastestLapTime: fastestLapTime,
-            totalLaps: totalAllLaps,
+            totalLaps: laps.length,
+            validLaps: totalAllLaps,
             averageLapTime: averageLapTime,
             slowestLapTime: slowestLapTime,
             consistency: consistency

@@ -18,6 +18,7 @@ export interface KartDriveData {
 
 export interface LapSummary {
     totalLaps: number;
+    validLaps: number;
     fastestLap: number;
     averageLapTime: number;
     fastestLapTime: number;
