@@ -1,1 +1,3 @@
-<p class="lap-row" [ngClass]="{ fastest: lap.fastest, invalid: lap.isInvalidLap }">{{ lap.lapNumber }} - {{ lap.lapTime }}</p>
+<p class="lap-row" [ngClass]="{ fastest: lap.fastest, invalid: lap.isInvalidLap }">
+  {{ lap.lapNumber }} - {{ lap.lapTime | number: '1.3-3' }}
+</p>
