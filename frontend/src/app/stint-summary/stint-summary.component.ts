@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { LapSummary } from '../session.service';
+import { LapEntry, LapSummary } from '../session.service';
 
 @Component({
     selector: 'kman-stint-summary',
@@ -10,5 +10,46 @@ import { LapSummary } from '../session.service';
     styleUrl: './stint-summary.component.scss'
 })
 export class StintSummaryComponent {
-    @Input({ required: true }) summary!: LapSummary;
+    summary!: LapSummary;
+    @Input({ required: true })
+    set laps(laps: LapEntry[]) {
+        this.summary = this.getSummary(laps);
+    }
+
+    getSummary(laps: LapEntry[]): LapSummary {
+        const validLaps = laps.filter(lap => !lap.isInvalidLap);
+
+        // TODO: Consider getting this from backend to avoid calculations on frontend.
+        const totalAllLaps = validLaps.length;
+        const totalTrueLaps = validLaps.length - 4;
+
+        const allTimes = validLaps.map(lap => lap.lapTime);
+        const trueTimes = validLaps.slice(2, -2).map(lap => lap.lapTime);
+
+        const fastestLapTime = Math.min(...allTimes);
+        let slowestLapTime = Math.max(...allTimes);
+        let averageLapTime = allTimes.length === 0 ? 0 : allTimes[0];
+        if (allTimes.length > 1) {
+            averageLapTime = allTimes.reduce((a, b) => a + b) / totalAllLaps;
+        }
+
+        const fastestLap: number = validLaps.find(lap => lap.lapTime === fastestLapTime)?.lapNumber ?? 0;
+
+        if (totalTrueLaps > 0) {
+            //fastestLapTime = Math.min(...trueTimes);
+            slowestLapTime = Math.max(...trueTimes);
+            averageLapTime = trueTimes.reduce((a, b) => a + b) / totalTrueLaps;
+        }
+
+        const consistency = slowestLapTime - fastestLapTime;
+
+        return {
+            fastestLap: fastestLap,
+            fastestLapTime: fastestLapTime,
+            totalLaps: totalAllLaps,
+            averageLapTime: averageLapTime,
+            slowestLapTime: slowestLapTime,
+            consistency: consistency
+        };
+    }
 }

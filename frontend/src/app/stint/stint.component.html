@@ -4,7 +4,7 @@
   </div>
   <div class="horizontal-flex">
     <div class="laps-summary">
-      <kman-stint-summary [summary]="getSummary(data)" />
+      <kman-stint-summary [laps]="data.laps" />
       <div [ngClass]="{ hidden: hideControls }">
         <button class="slim-btn invalidate-btn" style="width: 100px; margin-top: 5px" (click)="invalidateLap()">
           Invalidate lap
