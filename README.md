@@ -6,15 +6,17 @@
 ## Production status
 
 ![ci](https://github.com/ewancoder/kartman/actions/workflows/deploy.yml/badge.svg?branch=main)
-![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ewancoder/0184962696ef0364be7a3f491133f2f9/raw/kartman-api-coverage-main.json)
 ![status](https://img.shields.io/github/last-commit/ewancoder/kartman/main)
+![api-coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ewancoder/0184962696ef0364be7a3f491133f2f9/raw/kartman-api-coverage-main.json)
+![web-ui-coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ewancoder/0184962696ef0364be7a3f491133f2f9/raw/kartman-web-ui-coverage-main.json)
 
 ## Development status
 
 ![ci](https://github.com/ewancoder/kartman/actions/workflows/deploy.yml/badge.svg?branch=develop)
-![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ewancoder/0184962696ef0364be7a3f491133f2f9/raw/kartman-api-coverage-develop.json)
-![status](https://img.shields.io/github/last-commit/ewancoder/kartman/main)
+![status](https://img.shields.io/github/last-commit/ewancoder/kartman/develop)
 ![diff](https://img.shields.io/github/commits-difference/ewancoder/kartman?base=main&head=develop&logo=git&label=diff&color=orange)
+![api-coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ewancoder/0184962696ef0364be7a3f491133f2f9/raw/kartman-api-coverage-develop.json)
+![web-ui-coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ewancoder/0184962696ef0364be7a3f491133f2f9/raw/kartman-web-ui-coverage-develop.json)
 
 ## What it's about
 

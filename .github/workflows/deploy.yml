@@ -56,7 +56,7 @@ jobs:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: ${{ secrets.GIST_ID }}
         filename: kartman-api-coverage-${{ github.ref_name }}.json
-        label: Coverage
+        label: API Coverage
         message: ${{ env.COVERAGE }}%
         valColorRange: ${{ env.COVERAGE }}
         maxColorRange: 80
@@ -116,6 +116,26 @@ jobs:
     - name: Test Angular App
       run: npm test -- --watch=false --browsers=ChromeHeadless
       working-directory: frontend
+
+    - name: Write to Job Summary
+      if: '!cancelled()'
+      run: |
+        cat coverage/coverage.txt >> $GITHUB_STEP_SUMMARY |
+        echo COVERAGE=$(cat coverage/coverage.txt | grep % | awk -F '[% ]+' '{ sum += $3; count++ } END { print sum/count }') >> $GITHUB_ENV
+      working-directory: frontend
+
+    - name: Create Awesome Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      if: '!cancelled()'
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: ${{ secrets.GIST_ID }}
+        filename: kartman-web-ui-coverage-${{ github.ref_name }}.json
+        label: Web UI Coverage
+        message: ${{ env.COVERAGE }}%
+        valColorRange: ${{ env.COVERAGE }}
+        maxColorRange: 80
+        minColorRange: 3
 
   build-web-ui:
     runs-on: ubuntu-latest
