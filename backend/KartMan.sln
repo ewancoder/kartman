@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		db\migrations\20240913200020_invalid_lap_field.sql = db\migrations\20240913200020_invalid_lap_field.sql
 		db\migrations\20240918115846_session_updated_column.sql = db\migrations\20240918115846_session_updated_column.sql
 		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Global
