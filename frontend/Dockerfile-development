@@ -1,3 +1,5 @@
+# TODO: Do not copy dockerfiles, just use environment variable.
+
 FROM node:latest AS build
 WORKDIR /usr/src/app
 
@@ -7,6 +9,7 @@ RUN npm install -g @angular/cli
 RUN npm install
 
 COPY . .
+COPY src/config.development.ts src/config.ts
 RUN npm run build --prod
 
 FROM nginxinc/nginx-unprivileged

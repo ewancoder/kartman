@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, delay, map, Observable, of, retry } from 'rxjs';
+import config from '../config';
 
 export interface LapEntry {
     lapNumber: number;
@@ -43,7 +44,7 @@ export class SessionService {
     constructor(private http: HttpClient) {}
 
     getSessions(day: string): Observable<SessionInfo[]> {
-        return this.http.get<SessionInfo[]>(`https://api.kartman.typingrealm.com/api/sessions/${day}`).pipe(
+        return this.http.get<SessionInfo[]>(`${config.apiUri}/sessions/${day}`).pipe(
             map(infos =>
                 infos?.map(info => ({
                     ...info,
@@ -83,7 +84,7 @@ export class SessionService {
     }
 
     getKartDriveData(sessionId: string): Observable<KartDriveData[]> {
-        return this.http.get<KartDriveData[]>(`https://api.kartman.typingrealm.com/api/history/${sessionId}`).pipe(
+        return this.http.get<KartDriveData[]>(`${config.apiUri}/history/${sessionId}`).pipe(
             retry({
                 count: 3,
                 delay: 1000
@@ -145,18 +146,18 @@ export class SessionService {
     }
 
     invalidateLap(lapId: number) {
-        return this.http.put(`https://api.kartman.typingrealm.com/api/history/laps/${lapId}/invalid`, null);
+        return this.http.put(`${config.apiUri}/history/laps/${lapId}/invalid`, null);
     }
 
     validateLap(lapId: number) {
-        return this.http.put(`https://api.kartman.typingrealm.com/api/history/laps/${lapId}/valid`, null);
+        return this.http.put(`${config.apiUri}/history/laps/${lapId}/valid`, null);
     }
 
     getTotalLaps() {
-        return this.http.get<number>(`https://api.kartman.typingrealm.com/api/total-laps`);
+        return this.http.get<number>(`${config.apiUri}/total-laps`);
     }
 
     getFirstDate() {
-        return this.http.get<Date>(`https://api.kartman.typingrealm.com/api/first-date`);
+        return this.http.get<Date>(`${config.apiUri}/first-date`);
     }
 }

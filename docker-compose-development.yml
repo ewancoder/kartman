@@ -1,0 +1,38 @@
+version: "3.8"
+
+networks:
+  default:
+    name: typingrealm
+    external: true
+
+services:
+  dev-kartman-web:
+    image: ghcr.io/ewancoder/kartman-web:develop
+    container_name: dev-kartman-web
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 750m
+
+  dev-kartman-api:
+    image: ghcr.io/ewancoder/kartman-api:develop
+    container_name: dev-kartman-api
+    volumes:
+      - /data/dev-kartman/cache:/app/cache
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 750m
+    env_file:
+      - /data/dev-kartman/secrets.env
+
+  dev-kartman-postgres:
+    image: postgres
+    container_name: dev-kartman-postgres
+    ports:
+      - 20232:5432
+    volumes:
+      - /data/dev-kartman/postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 750m
+    env_file:
+      - /data/dev-kartman/secrets.env
