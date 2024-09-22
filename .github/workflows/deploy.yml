@@ -10,8 +10,61 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
+  test-api:
+    name: test-api
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+
+    - name: Test
+      run: dotnet test --logger trx --logger html --results-directory coverage --collect "XPlat Code Coverage"
+      working-directory: backend
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: '!cancelled()'
+      with:
+        name: coverage
+        path: backend/coverage
+
+    - name: Code coverage summary report
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      if: '!cancelled()'
+      with:
+        filename: 'backend/coverage/*/coverage.cobertura.xml'
+        badge: true
+        format: 'markdown'
+        output: 'both'
+        fail_below_min: true
+        thresholds: '0 80'
+
+    - name: Write to Job Summary
+      run: |
+        cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY |
+        echo COVERAGE=$(cat code-coverage-results.md | awk -F '|' '{print $2}' | sed -n 's/.*\*\*\([0-9]*\)%.*/\1/p') >> $GITHUB_ENV
+      if: '!cancelled()'
+
+    - name: Create Awesome Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      if: '!cancelled()'
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: ${{ secrets.GIST_ID }}
+        filename: kartman-api-coverage-${{ github.ref_name }}.json
+        label: Coverage
+        message: ${{ env.COVERAGE }}%
+        valColorRange: ${{ env.COVERAGE }}
+        maxColorRange: 80
+        minColorRange: 3
+
   build-api:
     runs-on: ubuntu-latest
+    needs: test-api
 
     permissions:
       contents: read
