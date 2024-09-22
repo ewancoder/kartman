@@ -97,8 +97,29 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
+  test-web-ui:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Adding Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Install Dependencies
+      run: npm ci
+      working-directory: frontend
+
+    - name: Test Angular App
+      run: npm test -- --watch=false --browsers=ChromeHeadless
+      working-directory: frontend
+
   build-web-ui:
     runs-on: ubuntu-latest
+    needs: test-web-ui
 
     permissions:
       contents: read
