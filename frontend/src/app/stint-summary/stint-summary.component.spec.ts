@@ -1,12 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { LapEntry } from '../session.service';
 import { tryInit } from '../test-init';
 import { StintSummaryComponent } from './stint-summary.component';
 
 describe('StintSummaryComponent', () => {
     let component: StintSummaryComponent;
     let fixture: ComponentFixture<StintSummaryComponent>;
+
+    async function setLaps(laps: LapEntry[]) {
+        fixture.componentRef.setInput('laps', laps);
+        await fixture.whenStable();
+    }
+
+    function shouldShow(row: number, title: string, value: string): void {
+        const allRows = fixture.nativeElement.querySelectorAll('tr');
+        expect(allRows[row - 1].cells[0].textContent).toBe(title);
+        expect(allRows[row - 1].cells[1].textContent).toBe(value);
+    }
+
+    function shouldHaveRows(amount: number) {
+        const allRows = fixture.nativeElement.querySelectorAll('tr');
+        expect(Array.from(allRows).length).toBe(amount);
+    }
 
     beforeEach(async () => {
         tryInit();
@@ -20,28 +37,7 @@ describe('StintSummaryComponent', () => {
     });
 
     describe('when zero laps', () => {
-        beforeEach(async () => {
-            component.laps = [];
-            await fixture.whenStable();
-        });
-
-        it('should have zero total laps', () => {
-            const summary = component.summary;
-
-            expect(summary).toBeTruthy();
-            expect(summary.totalLaps).toBe(0);
-        });
-
-        it('should show total laps', () => {
-            const allRows = fixture.nativeElement.querySelectorAll('tr');
-            expect(allRows[0].cells[0].textContent).toBe('Total');
-            expect(allRows[0].cells[1].textContent).toBe('0');
-        });
-
-        it('should only show total laps', () => {
-            const allRows = fixture.nativeElement.querySelectorAll('tr');
-            expect(Array.from(allRows).length).toBe(1);
-        });
+        beforeEach(() => setLaps([]));
 
         it('should have zero total laps', () => expect(component.summary.totalLaps).toBe(0));
         it('should have zero valid total laps', () => expect(component.summary.validLaps).toBe(0));
@@ -50,20 +46,22 @@ describe('StintSummaryComponent', () => {
         it('should not have average laptime', () => expect(component.summary.averageLapTime).toBe(0));
         it('should not have slowest laptime', () => expect(component.summary.slowestLapTime).toBe(0));
         it('should not have consistency', () => expect(component.summary.consistency).toBe(0));
+
+        it('should show total laps', () => shouldShow(1, 'Total', '0'));
+        it('should only show total laps', () => shouldHaveRows(1));
     });
 
     describe('when one valid lap', () => {
-        beforeEach(async () => {
-            component.laps = [
+        beforeEach(() =>
+            setLaps([
                 {
                     lapId: 1,
                     lapNumber: 1,
                     lapTime: 10,
                     isInvalidLap: false
                 }
-            ];
-            await fixture.whenStable();
-        });
+            ])
+        );
 
         it('should have 1 total lap', () => expect(component.summary.totalLaps).toBe(1));
         it('should have 1 total valid', () => expect(component.summary.validLaps).toBe(1));
@@ -71,30 +69,27 @@ describe('StintSummaryComponent', () => {
         it('should have fastest laptime', () => expect(component.summary.fastestLapTime).toBe(10));
         it('should have average laptime', () => expect(component.summary.averageLapTime).toBe(10));
         it('should have slowest laptime', () => expect(component.summary.slowestLapTime).toBe(10));
+        it('should have zero consistency', () => expect(component.summary.consistency).toBe(0));
 
         it('should show total laps', () => shouldShow(1, 'Total', '1'));
         it('should show fastest lap N', () => shouldShow(2, 'Fast N', '1'));
         it('should show fastest laptime', () => shouldShow(3, 'Fast', '10.000'));
         it('should show average laptime', () => shouldShow(4, 'Avg', '10.000'));
         it('should show slowest laptime', () => shouldShow(5, 'Slow', '10.000'));
-        it('should not show consistency', () => {
-            const allRows = fixture.nativeElement.querySelectorAll('tr');
-            expect(Array.from(allRows).length).toBe(5);
-        });
+        it('should not show consistency', () => shouldHaveRows(5));
     });
 
     describe('when one invalid lap', () => {
-        beforeEach(async () => {
-            component.laps = [
+        beforeEach(() =>
+            setLaps([
                 {
                     lapId: 1,
                     lapNumber: 1,
                     lapTime: 10.25123,
                     isInvalidLap: true
                 }
-            ];
-            await fixture.whenStable();
-        });
+            ])
+        );
 
         it('should have 1 total lap', () => expect(component.summary.totalLaps).toBe(1));
         it('should have zero valid total lap', () => expect(component.summary.validLaps).toBe(0));
@@ -105,22 +100,18 @@ describe('StintSummaryComponent', () => {
         it('should not have consistency', () => expect(component.summary.consistency).toBe(0));
 
         it('should show total laps', () => shouldShow(1, 'Total', '1'));
-        it('should only show total laps', () => {
-            const allRows = fixture.nativeElement.querySelectorAll('tr');
-            expect(Array.from(allRows).length).toBe(1);
-        });
+        it('should only show total laps', () => shouldHaveRows(1));
     });
 
     describe('when many laps but only one is valid', () => {
-        beforeEach(async () => {
-            component.laps = [
+        beforeEach(() =>
+            setLaps([
                 { lapId: 1, lapNumber: 1, lapTime: 10, isInvalidLap: true },
                 { lapId: 2, lapNumber: 2, lapTime: 20, isInvalidLap: true },
                 { lapId: 3, lapNumber: 3, lapTime: 30, isInvalidLap: true },
                 { lapId: 4, lapNumber: 4, lapTime: 40, isInvalidLap: false }
-            ];
-            await fixture.whenStable();
-        });
+            ])
+        );
 
         it('should have 4 total laps', () => expect(component.summary.totalLaps).toBe(4));
         it('should have 1 valid total lap', () => expect(component.summary.validLaps).toBe(1));
@@ -135,22 +126,18 @@ describe('StintSummaryComponent', () => {
         it('should show fastest laptime', () => shouldShow(3, 'Fast', '40.000'));
         it('should show average laptime', () => shouldShow(4, 'Avg', '40.000'));
         it('should show slowest laptime', () => shouldShow(5, 'Slow', '40.000'));
-        it('should not show consistency', () => {
-            const allRows = fixture.nativeElement.querySelectorAll('tr');
-            expect(Array.from(allRows).length).toBe(5);
-        });
+        it('should not show consistency', () => shouldHaveRows(5));
     });
 
     describe('when both valid and invalid laps and fastest is invalid', () => {
-        beforeEach(async () => {
-            component.laps = [
+        beforeEach(() =>
+            setLaps([
                 { lapId: 1, lapNumber: 1, lapTime: 10, isInvalidLap: true },
                 { lapId: 2, lapNumber: 2, lapTime: 20, isInvalidLap: false },
                 { lapId: 3, lapNumber: 3, lapTime: 30, isInvalidLap: true },
                 { lapId: 4, lapNumber: 4, lapTime: 40, isInvalidLap: false }
-            ];
-            await fixture.whenStable();
-        });
+            ])
+        );
 
         it('should have 4 total laps', () => expect(component.summary.totalLaps).toBe(4));
         it('should have 2 valid total laps', () => expect(component.summary.validLaps).toBe(2));
@@ -169,8 +156,8 @@ describe('StintSummaryComponent', () => {
     });
 
     describe('when there are 7 valid laps should count them all', () => {
-        beforeEach(async () => {
-            component.laps = [
+        beforeEach(() =>
+            setLaps([
                 { lapId: 1, lapNumber: 1, lapTime: 10, isInvalidLap: false },
                 { lapId: 2, lapNumber: 2, lapTime: 11, isInvalidLap: false },
                 { lapId: 3, lapNumber: 3, lapTime: 12, isInvalidLap: false },
@@ -180,9 +167,8 @@ describe('StintSummaryComponent', () => {
                 { lapId: 7, lapNumber: 7, lapTime: 23, isInvalidLap: false },
                 { lapId: 8, lapNumber: 8, lapTime: 24, isInvalidLap: false },
                 { lapId: 9, lapNumber: 9, lapTime: 25, isInvalidLap: false }
-            ];
-            await fixture.whenStable();
-        });
+            ])
+        );
 
         it('should have 9 total laps', () => expect(component.summary.totalLaps).toBe(9));
         it('should have 7 valid total laps', () => expect(component.summary.validLaps).toBe(7));
@@ -194,8 +180,8 @@ describe('StintSummaryComponent', () => {
     });
 
     describe('when there are 8 or more valid laps should not count first and last 2', () => {
-        beforeEach(async () => {
-            component.laps = [
+        beforeEach(() =>
+            setLaps([
                 { lapId: 1, lapNumber: 1, lapTime: 10, isInvalidLap: false },
                 { lapId: 2, lapNumber: 2, lapTime: 11, isInvalidLap: false },
                 { lapId: 3, lapNumber: 3, lapTime: 12, isInvalidLap: false },
@@ -206,9 +192,8 @@ describe('StintSummaryComponent', () => {
                 { lapId: 8, lapNumber: 8, lapTime: 24, isInvalidLap: false },
                 { lapId: 9, lapNumber: 9, lapTime: 25, isInvalidLap: false },
                 { lapId: 10, lapNumber: 10, lapTime: 30, isInvalidLap: false }
-            ];
-            await fixture.whenStable();
-        });
+            ])
+        );
 
         it('should have 10 total laps', () => expect(component.summary.totalLaps).toBe(10));
         it('should have 8 valid total laps', () => expect(component.summary.validLaps).toBe(8));
@@ -220,19 +205,10 @@ describe('StintSummaryComponent', () => {
     });
 
     describe('should show 3 fraction digits', () => {
-        beforeEach(async () => {
-            component.laps = [{ lapId: 1, lapNumber: 1, lapTime: 23.752123, isInvalidLap: false }];
-            await fixture.whenStable();
-        });
+        beforeEach(() => setLaps([{ lapId: 1, lapNumber: 1, lapTime: 23.752123, isInvalidLap: false }]));
 
         it('should show fastest laptime', () => shouldShow(3, 'Fast', '23.752'));
         it('should show average laptime', () => shouldShow(4, 'Avg', '23.752'));
         it('should show slowest laptime', () => shouldShow(5, 'Slow', '23.752'));
     });
-
-    function shouldShow(row: number, title: string, value: string): void {
-        const allRows = fixture.nativeElement.querySelectorAll('tr');
-        expect(allRows[row - 1].cells[0].textContent).toBe(title);
-        expect(allRows[row - 1].cells[1].textContent).toBe(value);
-    }
 });
