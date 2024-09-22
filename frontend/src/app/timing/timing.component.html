@@ -4,10 +4,10 @@
       <td class="timing-value kart-number" [style.background-color]="generateKartColor(+timing.kartName)">
         {{ timing.kartName }}
       </td>
-      <td class="timing-value">{{ timing.lastLapTime | number: '.2-3' }}</td>
+      <td class="timing-value">{{ timing.lastLapTime === timing.bestLapTime ? '' : (timing.lastLapTime | number: '.2-3') }}</td>
       <td class="timing-value fastest">{{ timing.bestLapTime | number: '.2-3' }}</td>
       <td class="timing-value" [ngClass]="{ positive: timing.delta > 0, bad: timing.delta > 0.5, good: timing.delta < 0 }">
-        {{ timing.delta > 0 ? '+' : '' }}{{ timing.delta | number: '.2-3' }}
+        {{ timing.delta > 0 ? '+' : '' }}{{ timing.delta === 0 ? '' : (timing.delta | number: '.2-3') }}
       </td>
       <td class="timing-value">{{ timing.totalLaps }}</td>
     </tr>
