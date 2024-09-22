@@ -77,7 +77,8 @@
               }
             ],
             "styles": ["node_modules/flatpickr/dist/themes/dark.css", "src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "karmaConfig": "karma.conf.js"
           }
         },
         "lint": {

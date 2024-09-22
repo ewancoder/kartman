@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\KartMan.Api\KartMan.Api.csproj" />
+  </ItemGroup>
+</Project>

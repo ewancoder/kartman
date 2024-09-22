@@ -10,8 +10,61 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
+  test-api:
+    name: test-api
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+
+    - name: Test
+      run: dotnet test --logger trx --logger html --results-directory coverage --collect "XPlat Code Coverage"
+      working-directory: backend
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: '!cancelled()'
+      with:
+        name: coverage
+        path: backend/coverage
+
+    - name: Code coverage summary report
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      if: '!cancelled()'
+      with:
+        filename: 'backend/coverage/*/coverage.cobertura.xml'
+        badge: true
+        format: 'markdown'
+        output: 'both'
+        fail_below_min: true
+        thresholds: '0 80'
+
+    - name: Write to Job Summary
+      run: |
+        cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY |
+        echo COVERAGE=$(cat code-coverage-results.md | awk -F '|' '{print $2}' | sed -n 's/.*\*\*\([0-9]*\)%.*/\1/p') >> $GITHUB_ENV
+      if: '!cancelled()'
+
+    - name: Create Awesome Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      if: '!cancelled()'
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: ${{ secrets.GIST_ID }}
+        filename: kartman-api-coverage-${{ github.ref_name }}.json
+        label: API Coverage
+        message: ${{ env.COVERAGE }}%
+        valColorRange: ${{ env.COVERAGE }}
+        maxColorRange: 80
+        minColorRange: 3
+
   build-api:
     runs-on: ubuntu-latest
+    needs: test-api
 
     permissions:
       contents: read
@@ -44,8 +97,49 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
+  test-web-ui:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Adding Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Install Dependencies
+      run: npm ci
+      working-directory: frontend
+
+    - name: Test Angular App
+      run: npm test -- --watch=false --browsers=ChromeHeadless
+      working-directory: frontend
+
+    - name: Write to Job Summary
+      if: '!cancelled()'
+      run: |
+        cat coverage/coverage.txt >> $GITHUB_STEP_SUMMARY |
+        echo COVERAGE=$(cat coverage/coverage.txt | grep % | awk -F '[% ]+' '{ sum += $3; count++ } END { print sum/count }') >> $GITHUB_ENV
+      working-directory: frontend
+
+    - name: Create Awesome Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      if: '!cancelled()'
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: ${{ secrets.GIST_ID }}
+        filename: kartman-web-ui-coverage-${{ github.ref_name }}.json
+        label: Web UI Coverage
+        message: ${{ env.COVERAGE }}%
+        valColorRange: ${{ env.COVERAGE }}
+        maxColorRange: 80
+        minColorRange: 3
+
   build-web-ui:
     runs-on: ubuntu-latest
+    needs: test-web-ui
 
     permissions:
       contents: read
@@ -68,13 +162,23 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/ewancoder/kartman-web
 
-    - name: Build and push API Docker image
-      id: push
+    - name: Build and push Production API Docker image
+      if: github.ref == 'refs/heads/main'
       uses: docker/build-push-action@v6
       with:
         push: true
         context: ./frontend
-        file: frontend/Dockerfile
+        file: frontend/Dockerfile-production
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Build and push Development API Docker image
+      if: github.ref == 'refs/heads/develop'
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        context: ./frontend
+        file: frontend/Dockerfile-development
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
@@ -99,3 +203,25 @@ jobs:
           curl https://raw.githubusercontent.com/ewancoder/kartman/main/docker-compose-production.yml > /tmp/kartman-docker-compose.yml
           docker compose -f /tmp/kartman-docker-compose.yml pull
           docker compose -f /tmp/kartman-docker-compose.yml up -d
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    needs: [build-api, build-web-ui]
+
+    permissions:
+      contents: read
+
+    steps:
+    - name: Deploy DEV to DO
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        passphrase: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          curl https://raw.githubusercontent.com/ewancoder/kartman/develop/docker-compose-development.yml > /tmp/dev-kartman-docker-compose.yml
+          docker compose -f /tmp/dev-kartman-docker-compose.yml pull
+          docker compose -f /tmp/dev-kartman-docker-compose.yml up -d
