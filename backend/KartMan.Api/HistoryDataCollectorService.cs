@@ -88,6 +88,8 @@ public sealed class HistoryDataCollectorService : IHostedService
                     _logger.LogTrace("Skipping logging of karting data because it's not a working time of day. Waiting for 5 minutes before next check.");
                     _dayEnded = true;
                     await Task.Delay(TimeSpan.FromMinutes(5));
+
+                    _cache.Clear(); // Clear the cache daily to not accumulate a lot of entries in memory.
                     continue;
                 }
 
