@@ -25,7 +25,7 @@ services:
       - /data/dev-kartman/secrets.env
 
   dev-kartman-postgres:
-    image: postgres
+    image: postgres:16
     container_name: dev-kartman-postgres
     ports:
       - 20232:5432

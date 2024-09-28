@@ -25,7 +25,7 @@ services:
       - /data/kartman/secrets.env
 
   kartman-postgres:
-    image: postgres
+    image: postgres:16
     container_name: kartman-postgres
     ports:
       - 10232:5432 # Port shouldn't be exposed in production.
