@@ -8,29 +8,51 @@ namespace KartMan.Api.Tests.Weather;
 public class WeatherRetrieverTests : Testing<WeatherRetriever>
 {
     [Theory, AutoMoqData]
-    public async Task GetWeatherAsync_ShouldGetWeather()
+    public async Task GetWeatherAsync_ShouldGetTempC()
     {
-        var httpClientFactory = Freeze<IHttpClientFactory>();
-
-        var handler = new Mock<HttpMessageHandler>();
-
-        using var client = new HttpClient(handler.Object);
-        httpClientFactory.Setup(x => x.CreateClient(string.Empty))
-            .Returns(client);
-
-        SetupHttpClient(handler, GetWeatherContent());
-
-        var config = Freeze<IConfiguration>();
-        config.Setup(x => x["WeatherApiKey"])
-            .Returns("key");
-
-        var sut = Fixture.Create<WeatherRetriever>();
-
+        var sut = SetupSut();
         var weather = await sut.GetWeatherAsync();
 
         Assert.NotNull(weather);
         Assert.Equal(10, weather.TempC);
+    }
+
+    [Theory, AutoMoqData]
+    public async Task GetWeatherAsync_ShouldGetConditionCode()
+    {
+        var sut = SetupSut();
+        var weather = await sut.GetWeatherAsync();
+
+        Assert.NotNull(weather);
         Assert.Equal(1000, weather.ConditionCode);
+    }
+
+    private WeatherRetriever SetupSut()
+    {
+        SetupHttpClient(GetWeatherContent());
+        SetupWeatherApiKey("key");
+
+        return Fixture.Create<WeatherRetriever>();
+    }
+
+    private void SetupWeatherApiKey(string key)
+    {
+        var config = Freeze<IConfiguration>();
+        config.Setup(x => x["WeatherApiKey"])
+            .Returns(key);
+    }
+
+    private void SetupHttpClient(string shouldRespondWith)
+    {
+        var httpClientFactory = Freeze<IHttpClientFactory>();
+
+        var handler = new Mock<HttpMessageHandler>();
+        var client = new HttpClient(handler.Object);
+
+        httpClientFactory.Setup(x => x.CreateClient(string.Empty))
+            .Returns(client);
+
+        SetupHttpClient(handler, shouldRespondWith);
     }
 
     private static void SetupHttpClient(Mock<HttpMessageHandler> handler, string shouldRespondWith)
