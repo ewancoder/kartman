@@ -7,24 +7,22 @@ namespace KartMan.Api.Tests.Weather;
 
 public class WeatherRetrieverTests : Testing<WeatherRetriever>
 {
-    [Theory, AutoMoqData]
-    public async Task GetWeatherAsync_ShouldGetTempC()
+    [Fact]
+    public Task GetWeatherAsync_ShouldHaveTempC()
+        => SHouldHaveAFieldAsync(x => x.TempC == 10);
+
+    [Fact]
+    public Task GetWeatherAsync_ShouldHaveConditionCode()
+        => SHouldHaveAFieldAsync(x => x.ConditionCode == 1000);
+
+    protected async Task SHouldHaveAFieldAsync(
+        Func<WeatherData, bool> predicate)
     {
         var sut = SetupSut();
         var weather = await sut.GetWeatherAsync();
 
         Assert.NotNull(weather);
-        Assert.Equal(10, weather.TempC);
-    }
-
-    [Theory, AutoMoqData]
-    public async Task GetWeatherAsync_ShouldGetConditionCode()
-    {
-        var sut = SetupSut();
-        var weather = await sut.GetWeatherAsync();
-
-        Assert.NotNull(weather);
-        Assert.Equal(1000, weather.ConditionCode);
+        Assert.True(predicate(weather));
     }
 
     private WeatherRetriever SetupSut()
