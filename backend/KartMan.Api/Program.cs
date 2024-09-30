@@ -6,6 +6,7 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<NpgsqlDataSource>(p =>
 {
     var connectionString = builder.Configuration["DbConnectionString"];
