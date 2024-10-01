@@ -22,6 +22,17 @@ public class WeatherRetrieverTests : Testing<WeatherRetriever>
     [Fact] public Task ShouldHave_WindKph() => ShouldHave(x => x.WindKph == 3.6m);
     [Fact] public Task ShouldHave_Timestamp() => ShouldHave(x => x.TimestampUtc == TimeProvider.GetUtcNow().UtcDateTime);
 
+    [Fact] public async Task ShouldReturnNull_WhenSomethingFails()
+    {
+        SetupHttpClient(HttpStatusCode.InternalServerError);
+        SetupWeatherApiKey("key");
+
+        var sut = Fixture.Create<WeatherRetriever>();
+        var weather = await sut.GetWeatherAsync();
+
+        Assert.Null(weather);
+    }
+
     protected async Task ShouldHave(
         Func<WeatherData, bool> predicate)
     {
@@ -60,6 +71,19 @@ public class WeatherRetrieverTests : Testing<WeatherRetriever>
         SetupHttpClient(handler, shouldRespondWith);
     }
 
+    private void SetupHttpClient(HttpStatusCode statusCode)
+    {
+        var httpClientFactory = Freeze<IHttpClientFactory>();
+
+        var handler = new Mock<HttpMessageHandler>();
+        var client = new HttpClient(handler.Object);
+
+        httpClientFactory.Setup(x => x.CreateClient(string.Empty))
+            .Returns(client);
+
+        SetupHttpClient(handler, statusCode);
+    }
+
     private static void SetupHttpClient(Mock<HttpMessageHandler> handler, string shouldRespondWith)
     {
         handler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
@@ -69,6 +93,17 @@ public class WeatherRetrieverTests : Testing<WeatherRetriever>
                 {
                     Content = new StringContent(shouldRespondWith)
                 };
+
+                return response;
+            });
+    }
+
+    private static void SetupHttpClient(Mock<HttpMessageHandler> handler, HttpStatusCode statusCode)
+    {
+        handler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .Returns(async (HttpRequestMessage request, CancellationToken token) =>
+            {
+                var response = new HttpResponseMessage(statusCode);
 
                 return response;
             });
