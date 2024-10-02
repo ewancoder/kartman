@@ -29,7 +29,10 @@ public class WeatherRetrieverTests : Testing<WeatherRetriever>
 
         var sut = Fixture.Create<WeatherRetriever>();
         var weather = await sut.GetWeatherAsync();
+        Assert.Null(weather);
 
+        SetupHttpClient("invalid json");
+        weather = await sut.GetWeatherAsync();
         Assert.Null(weather);
     }
 
