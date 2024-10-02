@@ -1,3 +1,16 @@
+@import '../../shared.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: $mobileWidth) {
+    flex-wrap: wrap;
+    max-height: 750px;
+    column-gap: 15px;
+  }
+}
+
 .lap-row {
   animation: flash-bg 2s;
 }

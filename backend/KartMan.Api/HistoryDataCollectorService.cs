@@ -85,9 +85,11 @@ public sealed class HistoryDataCollectorService : IHostedService
                 if ((DateTime.UtcNow.Hour < StartTimeHourUtc || DateTime.UtcNow.Hour >= EndTimeHourUtc)
                     && DateTime.UtcNow - _lastTelemetryRecordedAtUtc > TimeSpan.FromHours(1.5))
                 {
-                    _logger.LogTrace("Skipping logging of karting data because it's not a working time of day. Waiting for 5 minutes before next check.");
+                    _logger.LogTrace("Skipping logging of karting data because it's not a working time of day. Waiting for 5 minutes before next check");
                     _dayEnded = true;
                     await Task.Delay(TimeSpan.FromMinutes(5));
+
+                    _cache.Clear(); // Clear the cache daily to not accumulate a lot of entries in memory.
                     continue;
                 }
 
@@ -101,12 +103,12 @@ public sealed class HistoryDataCollectorService : IHostedService
             }
         }, cancellationToken);
 
-        _logger.LogInformation("Started gathering history data.");
+        _logger.LogInformation("Started gathering history data");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Stopped gathering history data.");
+        _logger.LogInformation("Stopped gathering history data");
         _isRunning = false;
         return Task.CompletedTask;
     }
@@ -115,7 +117,7 @@ public sealed class HistoryDataCollectorService : IHostedService
     {
         try
         {
-            _logger.LogDebug("Logging karting data.");
+            _logger.LogDebug("Logging karting data");
             using var client = _httpClientFactory.CreateClient();
             var response = await client.GetAsync("https://kart-timer.com/drivers/ajax.php?p=livescreen&track=110&target=updaterace");
             response.EnsureSuccessStatusCode();
@@ -125,7 +127,7 @@ public sealed class HistoryDataCollectorService : IHostedService
             var hash = Encoding.UTF8.GetString(MD5.HashData(Encoding.UTF8.GetBytes(content)));
             if (_previousHash == hash)
             {
-                _logger.LogTrace("Karting data didn't change since last time, not logging it.");
+                _logger.LogTrace("Karting data didn't change since last time, not logging it");
                 return;
             }
 
@@ -140,11 +142,11 @@ public sealed class HistoryDataCollectorService : IHostedService
 
                 if (_dayEnded && _lastSession == rawJson.headinfo.number && _lastSession != "1")
                 {
-                    _logger.LogDebug("Day has ended and it is the last session. Skipping.");
+                    _logger.LogDebug("Day has ended and it is the last session. Skipping");
                     return; // TODO: If there was only one session for the whole day - we'll write invalid data after all.
                 }
 
-                _logger.LogInformation("Storing the data. {DayEndend}, {LastSession}, {CurrentSessionNumber}", _dayEnded, _lastSession, rawJson.headinfo.number);
+                _logger.LogInformation("Storing the data: {DayEndend}, {LastSession}, {CurrentSessionNumber}", _dayEnded, _lastSession, rawJson.headinfo.number);
 
                 if (_dayEnded) _dayEnded = false;
                 _lastSession = rawJson.headinfo.number;
@@ -183,12 +185,12 @@ public sealed class HistoryDataCollectorService : IHostedService
                 }
                 catch (Exception exception)
                 {
-                    _logger.LogWarning(exception, "Error when trying to parse data for lap entry.");
+                    _logger.LogWarning(exception, "Error when trying to parse data for lap entry");
                     return null;
                 }
             }).Where(x => x != null && x.time < MaxRecordedLapTimeSeconds).ToList();
 
-            _logger.LogInformation("Saving karting entries to the database.");
+            _logger.LogInformation("Saving karting entries to the database");
             foreach (var entry in entries)
             {
                 // Just a performance optimization for when the app is already running.
@@ -203,7 +205,7 @@ public sealed class HistoryDataCollectorService : IHostedService
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Failed to gather karting data on the interval.");
+            _logger.LogError(exception, "Failed to gather karting data on the interval");
         }
     }
 }

@@ -31,16 +31,19 @@ public sealed class WeatherRetriever : IWeatherRetriever
     private readonly ILogger<WeatherRetriever> _logger;
     private readonly string _apiKey;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly TimeProvider _timeProvider;
 
     public WeatherRetriever(
         ILogger<WeatherRetriever> logger,
         IHttpClientFactory httpClientFactory,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        TimeProvider timeProvider)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _apiKey = configuration["WeatherApiKey"]
             ?? throw new InvalidOperationException("Could not get WeatherApiKey.");
+        _timeProvider = timeProvider;
     }
 
     public async ValueTask<WeatherData?> GetWeatherAsync()
@@ -60,7 +63,7 @@ public sealed class WeatherRetriever : IWeatherRetriever
                 ?? throw new InvalidOperationException("Could not deserialize the weather.");
 
             var data = new WeatherData(
-                DateTime.UtcNow,
+                _timeProvider.GetUtcNow().UtcDateTime,
                 raw.current.temp_c,
                 raw.current.is_day == 1,
                 raw.current.condition.code,

@@ -18,7 +18,7 @@ export class TimingComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         const sessions$ = this.sessionService.getSessions('today');
-        const polledData$ = timer(0, 2000).pipe(
+        const polledData$ = timer(0, 10000).pipe(
             switchMap(() => sessions$),
             retry(3),
             share()
