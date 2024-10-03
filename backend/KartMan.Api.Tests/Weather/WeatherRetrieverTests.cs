@@ -22,10 +22,11 @@ public class WeatherRetrieverTests : Testing<WeatherRetriever>
     [Fact] public Task ShouldHave_WindKph() => ShouldHave(x => x.WindKph == 3.6m);
     [Fact] public Task ShouldHave_Timestamp() => ShouldHave(x => x.TimestampUtc == TimeProvider.GetUtcNow().UtcDateTime);
 
-    [Fact] public async Task ShouldReturnNull_WhenSomethingFails()
+    [Fact]
+    public async Task ShouldReturnNull_WhenSomethingFails()
     {
         SetupHttpClient(HttpStatusCode.InternalServerError);
-        SetupWeatherApiKey("key");
+        SetupWeatherApiKey("weatherapikey");
 
         var sut = Fixture.Create<WeatherRetriever>();
         var weather = await sut.GetWeatherAsync();
@@ -49,7 +50,7 @@ public class WeatherRetrieverTests : Testing<WeatherRetriever>
     private WeatherRetriever SetupSut()
     {
         SetupHttpClient(GetWeatherContent());
-        SetupWeatherApiKey("key");
+        SetupWeatherApiKey("weatherapikey");
 
         return Fixture.Create<WeatherRetriever>();
     }
@@ -89,7 +90,8 @@ public class WeatherRetrieverTests : Testing<WeatherRetriever>
 
     private static void SetupHttpClient(Mock<HttpMessageHandler> handler, string shouldRespondWith)
     {
-        handler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+        handler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is<HttpRequestMessage>(
+            message => message.Method == HttpMethod.Get && message.RequestUri == new Uri("https://api.weatherapi.com/v1/current.json?key=weatherapikey&q=Batumi&aqi=no")), ItExpr.IsAny<CancellationToken>())
             .Returns(async (HttpRequestMessage request, CancellationToken token) =>
             {
                 var response = new HttpResponseMessage(HttpStatusCode.OK)
