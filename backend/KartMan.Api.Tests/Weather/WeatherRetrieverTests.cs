@@ -37,6 +37,19 @@ public class WeatherRetrieverTests : Testing<WeatherRetriever>
         Assert.Null(weather);
     }
 
+    [Fact]
+    public async Task ShouldThrow_WhenNotAbleToGetApiKey()
+    {
+        SetupWeatherApiKey(null!);
+
+        Assert.Throws<InvalidOperationException>(
+            () => new WeatherRetriever(
+                Fixture.Create<ILogger<WeatherRetriever>>(),
+                Fixture.Create<IHttpClientFactory>(),
+                Fixture.Create<IConfiguration>(),
+                Fixture.Create<TimeProvider>()));
+    }
+
     protected async Task ShouldHave(
         Func<WeatherData, bool> predicate)
     {
