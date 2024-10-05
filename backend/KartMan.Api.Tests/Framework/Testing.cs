@@ -15,6 +15,7 @@ public abstract class Testing<TSut> : IDisposable
     protected CancellationTokenSource Cts { get; } = new CancellationTokenSource();
 
     protected TObject Create<TObject>() => Fixture.Create<TObject>();
+    protected TSut CreateSut() => Fixture.Create<TSut>();
 
     protected Mock<TObject> Freeze<TObject>() where TObject : class
         => Fixture.Freeze<Mock<TObject>>();

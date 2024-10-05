@@ -38,10 +38,13 @@ public sealed record WeatherComparison(
 
 public sealed class WeatherGathererService : IHostedService, IDisposable
 {
+    public static readonly TimeSpan GatherInterval = TimeSpan.FromMinutes(1);
+
     private readonly CancellationTokenSource _cts = new();
     private readonly ILogger<WeatherGathererService> _logger;
     private readonly IWeatherRetriever _weatherRetriever;
     private readonly IWeatherStore _weatherStore;
+    private readonly TimeProvider _timeProvider;
     private CancellationTokenSource? _combinedCts;
     private bool _isRunning = true;
     private Task? _gathering;
@@ -55,11 +58,13 @@ public sealed class WeatherGathererService : IHostedService, IDisposable
     public WeatherGathererService(
         ILogger<WeatherGathererService> logger,
         IWeatherRetriever weatherRetriever,
-        IWeatherStore weatherStore)
+        IWeatherStore weatherStore,
+        TimeProvider timeProvider)
     {
         _logger = logger;
         _weatherRetriever = weatherRetriever;
         _weatherStore = weatherStore;
+        _timeProvider = timeProvider;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -104,7 +109,7 @@ public sealed class WeatherGathererService : IHostedService, IDisposable
             }
             finally
             {
-                await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+                await Task.Delay(GatherInterval, _timeProvider, cancellationToken);
             }
         }
     }
