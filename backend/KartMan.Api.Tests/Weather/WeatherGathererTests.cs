@@ -52,4 +52,18 @@ public class WeatherGathererTests : Testing<WeatherGathererService>
 
         _weatherStore.Verify(x => x.StoreAsync(data), Times.Once);
     }
+
+    [Fact, AutoMoqData]
+    public async Task ShouldStop_WhenCancellationRequested()
+    {
+        var sut = CreateSut();
+
+        await Cts.CancelAsync();
+
+        await sut.StartAsync(Cts.Token);
+        TimeProvider.Advance(TimeSpan.FromDays(10));
+
+        _weatherRetriever.Verify(x => x.GetWeatherAsync(), Times.Never);
+        _weatherStore.Verify(x => x.StoreAsync(It.IsAny<WeatherData>()), Times.Never);
+    }
 }
