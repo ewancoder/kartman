@@ -66,4 +66,25 @@ public class WeatherGathererTests : Testing<WeatherGathererService>
         _weatherRetriever.Verify(x => x.GetWeatherAsync(), Times.Never);
         _weatherStore.Verify(x => x.StoreAsync(It.IsAny<WeatherData>()), Times.Never);
     }
+
+    [Theory, AutoMoqData]
+    public async Task ShouldNotStop_WhenFailedToGatherData(
+        WeatherData data)
+    {
+        _weatherRetriever.Setup(x => x.GetWeatherAsync())
+            .Returns(() => ValueTask.FromException<WeatherData?>(new InvalidOperationException()));
+
+        var sut = CreateSut();
+
+        await sut.StartAsync(Cts.Token);
+
+        _weatherStore.Verify(x => x.StoreAsync(data), Times.Never);
+
+        _weatherRetriever.Setup(x => x.GetWeatherAsync())
+            .Returns(() => new(data));
+        TimeProvider.Advance(WeatherGathererService.GatherInterval);
+        await WaitAsync();
+
+        _weatherStore.Verify(x => x.StoreAsync(data));
+    }
 }
