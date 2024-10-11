@@ -17,7 +17,6 @@
       <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <ImplicitUsings>enable</ImplicitUsings>
       </PropertyGroup>
       <ItemGroup>
         <PackageReference Include="coverlet.collector" />
