@@ -27,3 +27,7 @@ The following technologies were used:
 - Postgresql
 - Serilog for logging (to Seq)
 - Angular (zoneless)
+
+## Temp
+
+Bump the build to update Seq API key. Remove this later.
