@@ -1,8 +1,10 @@
 @import './shared.scss';
+$bgOpacity: 0.95;
 
 html,
 body {
   height: 100%;
+  background: linear-gradient(rgba(255, 255, 255, $bgOpacity), rgba(255, 255, 255, $bgOpacity)), url('/bg.webp');
 }
 
 body {
