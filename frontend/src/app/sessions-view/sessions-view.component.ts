@@ -127,6 +127,11 @@ export class SessionsViewComponent implements OnInit, AfterViewInit {
 
         this.sessions$ = this.shouldPoll ? polledData$ : loader.data$;
     }
+
+    getLazyMaxIndex() {
+        if (new URLSearchParams(window.location.search).get('loadall')) return 9999;
+        return 9;
+    }
 }
 
 export class Loader<TResponse> {
