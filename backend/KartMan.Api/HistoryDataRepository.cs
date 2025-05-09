@@ -36,6 +36,49 @@ public sealed class HistoryDataRepository
         _db = db;
     }
 
+    public async ValueTask DownloadHistoricalDataCsvAsync(DateTime from, DateTime to, StreamWriter writer)
+    {
+        using var _ = _logger.AddScoped("DateRange", $"{from:O}-{to:O}").BeginScope();
+        _logger.LogInformation("Creating CSV");
+        try
+        {
+            await writer.WriteLineAsync("lap_id,kart,lap,laptime,invalid_lap,session,recorded_at");
+            await using var connection = await _db.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
+
+            command.CommandText = """
+                SELECT d.id, d.kart, d.lap, d.laptime, d.invalid_lap, s.session, d.recorded_at
+                FROM lap_data d
+                JOIN session s ON d.session_id = s.id
+                WHERE d.recorded_at BETWEEN @from AND @to
+                ORDER BY d.recorded_at ASC;
+            """;
+            command.Parameters.AddWithValue("from", from);
+            command.Parameters.AddWithValue("to", to);
+
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var lapId = reader.GetInt64(0);
+                var kart = reader.GetString(1);
+                var lap = reader.GetInt32(2);
+                var time = reader.GetDecimal(3);
+                var invalidLap = !await reader.IsDBNullAsync(4) && reader.GetBoolean(4);
+                var session = reader.GetInt32(5);
+                var recordedAt = reader.GetDateTime(6);
+
+                await writer.WriteLineAsync($"{lapId},{kart},{lap},{time},{invalidLap},{session},{recordedAt:O}");
+            }
+
+            await writer.FlushAsync();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Failed to get historical data");
+            throw;
+        }
+    }
+
     public async ValueTask<IEnumerable<SessionInfo>> GetSessionInfosForDay(DateOnly day)
     {
         using var _ = _logger.AddScoped("Day", day).BeginScope();

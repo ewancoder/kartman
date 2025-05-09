@@ -1,4 +1,5 @@
-﻿using KartMan.Api;
+﻿using System.Text;
+using KartMan.Api;
 using KartMan.Api.Weather;
 using Npgsql;
 using Serilog;
@@ -50,6 +51,13 @@ var app = builder.Build();
 app.MapGet("/diag", () => DateTime.UtcNow);
 
 var repository = app.Services.GetRequiredService<HistoryDataRepository>();
+
+app.MapGet("/api/export/csv", async (HttpResponse response, DateTime from, DateTime to) =>
+{
+    response.Headers.Append("Content-Disposition", "attachment; filename=data.csv");
+    await using var writer = new StreamWriter(response.Body, Encoding.UTF8, 5 * 1024 * 1024);
+    await repository.DownloadHistoricalDataCsvAsync(from, to, writer);
+});
 
 app.MapGet("/api/sessions/{dateString}", async (string dateString) =>
 {
