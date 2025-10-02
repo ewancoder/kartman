@@ -40,7 +40,7 @@ builder.Host.UseSerilog((context, config) =>
 builder.Services.AddCors(x =>
 {
     x.AddPolicy("Cors", x => x
-        .WithOrigins("http://localhost:4200", "https://kartman.typingrealm.com", "https://dev.kartman.typingrealm.com")
+        .WithOrigins("http://localhost:4200", "https://kartman.typingrealm.com", "https://dev.kartman.typingrealm.com", "https://kartman.typingrealm.org")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());

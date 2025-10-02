@@ -1,3 +1,3 @@
 export default {
-    apiUri: 'https://api.kartman.typingrealm.com/api'
+    apiUri: 'https://api.kartman.typingrealm.org/api'
 };
